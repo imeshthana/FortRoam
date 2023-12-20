@@ -83,7 +83,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
               ),
-
               SizedBox(height: 10.0),
               Text(
                 'Your go-to guide for a memorable stay',
@@ -95,23 +94,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
               SizedBox(height: 100.0),
-              //
-              // Material(
-              //   elevation: 5.0,
-              //   color: Colors.orange[800],
-              //   borderRadius: BorderRadius.circular(30.0),
-              //   child: MaterialButton(
-              //     onPressed: () {
-              //       Navigator.pushNamed(context, HomeScreen.id);
-              //     },
-              //     minWidth: 200.0,
-              //     height: 50.0,
-              //     child: Text(
-              //       'GET STARTED',
-              //       style: TextStyle(color: Colors.white),
-              //     ),
-              //   ),
-              // ),
               CircularProgressIndicator(
                 color: Colors.orange[800],
               ),
