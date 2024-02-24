@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:fort_roam/screens/home_screen.dart';
+import 'package:fort_roam/screens/main_layout.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
-  static String id = 'login_screen';
+  static String id = 'welcome_screen';
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  bool showProgress = false;
+
   @override
   void initState() {
-    super.initState();
+    setState(() {
+      showProgress = false;
+    });
 
-    // Simulate a loading delay
-    Future.delayed(Duration(seconds: 8), () {
-      // After the delay, navigate to the home screen
-      Navigator.pushReplacementNamed(context, HomeScreen.id);
+    Future.delayed(Duration(seconds: 5), () {
+      Navigator.pushReplacementNamed(context, MainLayout.id);
     });
   }
 
@@ -83,7 +86,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
               ),
-
               SizedBox(height: 10.0),
               Text(
                 'Your go-to guide for a memorable stay',
@@ -95,25 +97,32 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
               SizedBox(height: 100.0),
-              //
-              // Material(
-              //   elevation: 5.0,
-              //   color: Colors.orange[800],
-              //   borderRadius: BorderRadius.circular(30.0),
-              //   child: MaterialButton(
-              //     onPressed: () {
-              //       Navigator.pushNamed(context, HomeScreen.id);
-              //     },
-              //     minWidth: 200.0,
-              //     height: 50.0,
-              //     child: Text(
-              //       'GET STARTED',
-              //       style: TextStyle(color: Colors.white),
-              //     ),
-              //   ),
-              // ),
-              CircularProgressIndicator(
-                color: Colors.orange[800],
+              Visibility(
+                visible: !showProgress,
+                child: Material(
+                  elevation: 5.0,
+                  color: const Color.fromRGBO(226, 94, 62, 1),
+                  borderRadius: BorderRadius.circular(30.0),
+                  child: MaterialButton(
+                    onPressed: () {
+                      setState(() {
+                        showProgress = true;
+                      });
+                    },
+                    minWidth: 200.0,
+                    height: 50.0,
+                    child: Text(
+                      'GET STARTED',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: showProgress,
+                child: CircularProgressIndicator(
+                  color: const Color.fromRGBO(226, 94, 62, 1),
+                ),
               ),
             ],
           ),
