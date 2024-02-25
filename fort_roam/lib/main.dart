@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fort_roam/dbHelper/mongodb.dart';
 import 'package:fort_roam/screens/favourites_screen.dart';
 import 'package:fort_roam/screens/home_screen.dart';
 import 'package:fort_roam/screens/main_layout.dart';
@@ -9,7 +10,9 @@ import 'package:fort_roam/screens/support_screen.dart';
 import 'package:fort_roam/screens/activity_screen.dart';
 import 'package:fort_roam/screens/commercial_screen.dart';
 
-void main() {
+void main()async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await MongoDatabase.connect();
   runApp(const FortRoamApp());
 }
 
