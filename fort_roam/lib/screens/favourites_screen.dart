@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fort_roam/components/app_bar1.dart';
 import 'package:fort_roam/components/gesture_card.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:fort_roam/components/items_grid.dart';
 import 'package:fort_roam/components/navigation_bar.dart';
 import 'package:fort_roam/components/search_bar.dart';
 import 'package:fort_roam/components/sub_titles.dart';
@@ -10,12 +11,24 @@ class FavouritesScreen extends StatelessWidget {
   FavouritesScreen({super.key});
   static String id = 'favourites_screen';
 
-  final Map<String, String> cardImages = {
-    'images/1.jpg': 'xwedxecw',
-    'images/2.jpg': 'ecewcewc',
-    'images/3.jpg': 'edewccew',
-    'images/4.jpg': 'xewxwxexw'
-  };
+  final List<Map<String, String>> favouritePlaces = [
+    {
+      'image': 'images/1.jpg',
+      'title': 'Lighthouse',
+    },
+    {
+      'image': 'images/2.jpg',
+      'title': 'Jewelleries',
+    },
+    {
+      'image': 'images/3.jpg',
+      'title': 'Fort Jump',
+    },
+    {
+      'image': 'images/4.jpg',
+      'title': 'Museum',
+    }
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -39,59 +52,7 @@ class FavouritesScreen extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10),
-                  itemCount: cardImages.length,
-                  itemBuilder: (context, index) {
-                    final imageKey = cardImages.keys.elementAt(index);
-                    final imageValue = cardImages.values.elementAt(index);
-
-                    return GestureDetector(
-                      onTap: () {},
-                      child: Card(
-                        elevation: 0,
-                        margin: EdgeInsets.only(left: 10, right: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Material(
-                                elevation: 10.0,
-                                borderRadius: BorderRadius.circular(15.0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  child: Image.asset(
-                                    imageKey,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 8.0),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                imageValue,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                ItemsGrid(places: favouritePlaces)
               ],
             ),
           ),

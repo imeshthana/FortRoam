@@ -1,6 +1,9 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:fort_roam/components/card_items_container.dart';
+import 'package:fort_roam/components/items_list.dart';
 import 'package:fort_roam/components/app_bar2.dart';
+import 'package:fort_roam/components/carousel_card_items.dart';
+import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/components/gesture_card.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:fort_roam/components/navigation_bar.dart';
@@ -11,12 +14,9 @@ class HistoryScreen extends StatelessWidget {
   HistoryScreen({super.key});
   static String id = 'history_screen';
 
-  final Map<String, String> cardImages = {
-    'images/1.jpg': 'xwedxecw',
-    'images/2.jpg': 'ecewcewc',
-    'images/3.jpg': 'edewccew',
-    'images/4.jpg': 'xewxwxexw'
-  };
+  List<Map<String, String>> filterPlacesBySubtype(String subtype) {
+    return places.where((place) => place['subtype'] == subtype).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +38,19 @@ class HistoryScreen extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              CardItemsContainer(),
+              CarouselCardItems(
+                placeList: filterPlacesBySubtype('museum'),
+              ),
               SizedBox(
                 height: 20,
               ),
-              SubTitles(subTitle: "Bastians"),
+              SubTitles(subTitle: "Bastions"),
               SizedBox(
                 height: 20,
               ),
-              CardItemsContainer(),
+              CarouselCardItems(
+                placeList: filterPlacesBySubtype('bastion'),
+              ),
               SizedBox(
                 height: 20,
               ),
@@ -54,7 +58,12 @@ class HistoryScreen extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              CardItemsContainer(),
+              CarouselCardItems(
+                placeList: filterPlacesBySubtype('others'),
+              ),
+              SizedBox(
+                height: 40,
+              )
             ],
           ),
         ),

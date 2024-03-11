@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:fort_roam/components/app_bar2.dart';
-import 'package:fort_roam/components/card_items_container.dart';
+import 'package:fort_roam/components/items_list.dart';
+import 'package:fort_roam/components/carousel_card_items.dart';
 import 'package:fort_roam/components/gesture_card.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:fort_roam/components/navigation_bar.dart';
 import 'package:fort_roam/components/search_bar.dart';
 import 'package:fort_roam/components/sub_titles.dart';
+import 'package:fort_roam/components/constants.dart';
 
 class CommercialScreen extends StatelessWidget {
   const CommercialScreen({super.key});
   static String id = 'commercial_screen';
+
+  List<Map<String, String>> filterPlacesBySubtype(String subtype) {
+    return places.where((place) => place['subtype'] == subtype).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +37,9 @@ class CommercialScreen extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              CardItemsContainer(),
+              CarouselCardItems(
+                placeList: filterPlacesBySubtype('hotel'),
+              ),
               SizedBox(
                 height: 20,
               ),
@@ -39,23 +47,22 @@ class CommercialScreen extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              CardItemsContainer(),
+              CarouselCardItems(
+                placeList: filterPlacesBySubtype('restaurant'),
+              ),
               SizedBox(
                 height: 20,
               ),
-              SubTitles(subTitle: "Jewellery and Souvenir"),
+              SubTitles(subTitle: "Shops"),
               SizedBox(
                 height: 20,
               ),
-              CardItemsContainer(),
-              SizedBox(
-                height: 20,
+              CarouselCardItems(
+                placeList: filterPlacesBySubtype('shop'),
               ),
-              SubTitles(subTitle: "Others"),
               SizedBox(
-                height: 20,
+                height: 40,
               ),
-              CardItemsContainer(),
             ],
           ),
         ),

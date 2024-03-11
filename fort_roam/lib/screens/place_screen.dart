@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:fort_roam/components/app_bar2.dart';
 import 'package:fort_roam/components/gesture_card.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -7,8 +8,19 @@ import 'package:fort_roam/components/search_bar.dart';
 import 'package:fort_roam/components/sub_titles.dart';
 
 class PlaceScreen extends StatelessWidget {
-  PlaceScreen({super.key});
+  PlaceScreen(
+      {super.key,
+      required this.image,
+      required this.title,
+      required this.imageHeroTag,
+      required this.titleHeroTag});
+
   static String id = 'place_screen';
+
+  final String image;
+  final String title;
+  final UniqueKey imageHeroTag;
+  final UniqueKey titleHeroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +36,7 @@ class PlaceScreen extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       // bottomNavigationBar: CustomNavigationBar(),
-      appBar: CustomAppBar(),
+      // appBar: CustomAppBar(),
       body: Container(
         height: MediaQuery.of(context).size.height,
         child: SingleChildScrollView(
@@ -41,10 +53,13 @@ class PlaceScreen extends StatelessWidget {
                     children: [
                       Container(
                         width: double.infinity,
-                        height: 250.0,
-                        child: Image.asset(
-                          'images/gallefort.jpg',
-                          fit: BoxFit.fill,
+                        height: 350.0,
+                        child: Hero(
+                          tag: imageHeroTag,
+                          child: Image.asset(
+                            image,
+                            fit: BoxFit.fill,
+                          ),
                         ),
                       ),
                       Container(
@@ -68,7 +83,9 @@ class PlaceScreen extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                Center(child: SubTitles(subTitle: 'Galle Fort'))
+                Center(
+                    child: Hero(
+                        tag: titleHeroTag, child: SubTitles(subTitle: title)))
               ],
             ),
           ),

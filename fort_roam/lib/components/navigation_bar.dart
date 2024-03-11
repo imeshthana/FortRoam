@@ -32,7 +32,7 @@ class CustomNavigationBar extends StatelessWidget {
           } else if (id == 1) {
             Navigator.pushNamed(context, 'favourites_screen');
           } else if (id == 2) {
-            Navigator.pushNamed(context, 'commercial_screen');
+            Navigator.pushNamed(context, 'map_screen');
           }
           
         });

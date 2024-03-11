@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class SectionIconButton extends StatelessWidget {
   SectionIconButton(
       {required this.icon, required this.route, required this.section});
 
   final String section;
-  final String route;
+  final Widget route;
   final IconData icon;
 
   @override
@@ -13,7 +14,13 @@ class SectionIconButton extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, route);
+          Navigator.push(
+              context,
+              PageTransition(
+                  child: route,
+                  type: PageTransitionType.bottomToTop,
+                  duration: Duration(milliseconds: 500),
+                  reverseDuration: Duration(milliseconds: 500)));
         },
         child: Column(
           children: [

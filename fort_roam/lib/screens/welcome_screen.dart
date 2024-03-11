@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fort_roam/screens/home_screen.dart';
 import 'package:fort_roam/screens/main_layout.dart';
+import 'package:page_transition/page_transition.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -21,7 +22,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     });
 
     Future.delayed(Duration(seconds: 5), () {
-      Navigator.pushReplacementNamed(context, MainLayout.id);
+      Navigator.push(
+          context,
+          PageTransition(
+            child: MainLayout(),
+            type: PageTransitionType.bottomToTop,
+            duration: Duration(seconds: 2),
+          ));
     });
   }
 
@@ -36,7 +43,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 width: double.infinity,
                 height: 250.0,
                 child: Image.asset(
-                  'images/Cover1.jpg',
+                  'images/cover.jpg',
                   fit: BoxFit.fill,
                 ),
               ),
@@ -66,6 +73,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 tag: 'logo',
                 child: Container(
                     child: Image.asset('images/logo.png'), height: 75.0),
+              ),
+              SizedBox(
+                height: 20,
               ),
               Hero(
                 tag: 'title',

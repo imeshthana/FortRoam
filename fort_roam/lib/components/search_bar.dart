@@ -17,8 +17,6 @@ class CustomSearchBar extends StatelessWidget {
       ),
       child: TextField(
         textAlign: TextAlign.center,
-        keyboardType: TextInputType.text,
-        onChanged: (value) {},
         decoration: InputDecoration(
           hintText: 'Search',
           hintStyle: TextStyle(

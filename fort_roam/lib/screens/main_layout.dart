@@ -1,9 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fort_roam/screens/favourites_screen.dart';
 import 'package:fort_roam/screens/home_screen.dart';
+import 'package:fort_roam/screens/map_screen.dart';
 import 'package:fort_roam/screens/support_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:fort_roam/screens/voice_screen.dart';
 
 class MainLayout extends StatefulWidget {
   MainLayout({super.key});
@@ -23,6 +26,7 @@ class _MainLayoutState extends State<MainLayout> {
     return Scaffold(
       body: PageView(
         controller: _page,
+        physics: NeverScrollableScrollPhysics(),
         onPageChanged: ((value) {
           setState(
             () {
@@ -30,9 +34,15 @@ class _MainLayoutState extends State<MainLayout> {
             },
           );
         }),
-        children: [HomeScreen(), FavouritesScreen(), SupportScreen()],
+        children: [
+          HomeScreen(),
+          FavouritesScreen(),
+          VoiceScreen(),
+          MapScreen()
+        ],
       ),
       bottomNavigationBar: CurvedNavigationBar(
+        animationDuration: Duration(milliseconds: 500),
         index: currentPage,
         height: 60,
         backgroundColor: Colors.transparent,
@@ -43,7 +53,7 @@ class _MainLayoutState extends State<MainLayout> {
             _page.animateToPage(
               page,
               duration: const Duration(
-                milliseconds: 500,
+                milliseconds: 1000,
               ),
               curve: Curves.easeInOut,
             );
@@ -59,6 +69,10 @@ class _MainLayoutState extends State<MainLayout> {
             color: Colors.white,
           ),
           Icon(
+            Icons.mic,
+            color: Colors.white,
+          ),
+          Icon(
             Icons.location_on,
             color: Colors.white,
           )
@@ -68,22 +82,3 @@ class _MainLayoutState extends State<MainLayout> {
   }
 }
 
-
-          // BottomNavigationBarItem(
-          //   icon: FaIcon(
-          //     FontAwesomeIcons.houseChimneyMedical,
-          //   ),
-          //   label: 'Home',
-          // ),
-          // BottomNavigationBarItem(
-          //   icon: FaIcon(
-          //     FontAwesomeIcons.solidCalendarCheck,
-          //   ),
-          //   label: 'favourite',
-          // ),
-          // BottomNavigationBarItem(
-          //   icon: FaIcon(
-          //     FontAwesomeIcons.solidCalendarCheck,
-          //   ),
-          //   label: 'favourite',
-          // ),
