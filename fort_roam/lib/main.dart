@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fort_roam/dbHelper/display.dart';
 import 'package:fort_roam/dbHelper/mongodb.dart';
+import 'package:fort_roam/screens/about_us_screen.dart';
 import 'package:fort_roam/screens/favourites_screen.dart';
 import 'package:fort_roam/screens/home_screen.dart';
 import 'package:fort_roam/screens/main_layout.dart';
@@ -38,6 +39,7 @@ class FortRoamApp extends StatelessWidget {
           MainLayout.id: (context) => MainLayout(),
           MapScreen.id: (context) => MapScreen(),
           VoiceScreen.id: (context) => VoiceScreen(),
+          AboutUsScreen.id: (context) => AboutUsScreen(),
         });
   }
 }

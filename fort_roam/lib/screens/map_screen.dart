@@ -5,16 +5,23 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animarker/core/ripple_marker.dart';
 import 'package:flutter_animarker/widgets/animarker.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/components/navigation_bar.dart';
+import 'package:fort_roam/screens/place_screen.dart';
 import 'package:location/location.dart';
-import '../components/app_bar1.dart';
+import 'package:page_transition/page_transition.dart';
+import '../components/app_bar2.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:custom_info_window/custom_info_window.dart';
 
 class MapScreen extends StatefulWidget {
+  MapScreen({this.title});
+
+  final String? title;
+
   @override
   State<MapScreen> createState() => _MapScreenState();
   static String id = 'map_screen';
@@ -36,11 +43,13 @@ class _MapScreenState extends State<MapScreen>
   final Completer<GoogleMapController> controller = Completer();
 
   static const LatLng center =
-      const LatLng(6.028781529705348, 80.21649439316992);
+      const LatLng(6.028320555913446, 80.21670426593813);
 
   List<LatLng> polylineCoordinates = [];
+  Map<PolylineId, Polyline> polylines = {};
+  PolylinePoints polylinePoints = PolylinePoints();
 
-  void getPolyPoints() async {
+  getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
 
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
@@ -53,8 +62,18 @@ class _MapScreenState extends State<MapScreen>
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
+      // addPolyLines();
       setState(() {});
     }
+  }
+
+  addPolyLines() {
+    PolylineId id = PolylineId('route');
+    Polyline polyline = Polyline(
+        polylineId: id, color: Colors.red, points: polylineCoordinates);
+    polylines[id] = polyline;
+
+    setState(() {});
   }
 
   LocationData? currentLocation;
@@ -68,19 +87,9 @@ class _MapScreenState extends State<MapScreen>
     });
   }
 
-  Future<Uint8List> getBytesFromMapIcons(String path, int size) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetHeight: size, targetWidth: size);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
-  }
-
-  List<Marker> markers = [];
-
   infoWindow(double latitude, double longitude, Map<String, String> place) {
+    final UniqueKey titleHeroTag = UniqueKey();
+    final UniqueKey imageHeroTag = UniqueKey();
     customInfoWindowController.addInfoWindow!(
       Container(
         height: 400,
@@ -95,17 +104,20 @@ class _MapScreenState extends State<MapScreen>
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 400,
-                height: 100,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: Image.asset(place['image'].toString()).image,
-                    fit: BoxFit.fill,
-                  ),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(18),
-                    topRight: Radius.circular(18),
+              Hero(
+                tag: imageHeroTag,
+                child: Container(
+                  width: 400,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: Image.asset(place['image'].toString()).image,
+                      fit: BoxFit.fill,
+                    ),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(18),
+                      topRight: Radius.circular(18),
+                    ),
                   ),
                 ),
               ),
@@ -113,11 +125,14 @@ class _MapScreenState extends State<MapScreen>
                 height: 10,
               ),
               Center(
-                child: Text(
-                  place['title']!,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                child: Hero(
+                  tag: titleHeroTag,
+                  child: Text(
+                    place['title']!,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -135,13 +150,73 @@ class _MapScreenState extends State<MapScreen>
                 ),
               ),
               SizedBox(
-                height: 5,
+                height: 10,
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Material(
+                    color: kColor1,
+                    borderRadius: BorderRadius.circular(50.0),
+                    child: MaterialButton(
+                      padding: EdgeInsets.all(0.5),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                              child: PlaceScreen(
+                                image: place['image']!,
+                                title: place['title']!,
+                                titleHeroTag: titleHeroTag,
+                                imageHeroTag: imageHeroTag,
+                              ),
+                              type: PageTransitionType.scale,
+                              alignment: Alignment.center,
+                              duration: Duration(milliseconds: 300),
+                            ));
+                      },
+                      height: 2,
+                      child: Text(
+                        'More Info',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 0),
+                  Material(
+                    color: kColor1,
+                    shape: CircleBorder(),
+                    child: MaterialButton(
+                      padding: EdgeInsets.all(0.5),
+                      onPressed: () {},
+                      child: Icon(
+                        Icons.directions,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ]),
       ),
       LatLng(latitude, longitude),
     );
   }
+
+  Future<Uint8List> getBytesFromMapIcons(String path, int size) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetHeight: size, targetWidth: size);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
+  List<Marker> markers = [];
 
   loadData() async {
     final Uint8List mapIcon1 =
@@ -228,20 +303,44 @@ class _MapScreenState extends State<MapScreen>
       markers.addAll(placeMarkers);
     }
 
-    // if (currentLocation != null) {
-    //   markers.add(
-    //     Marker(
-    //       markerId: MarkerId("currentlocation"),
-    //       position:
-    //           LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-    //       icon: BitmapDescriptor.defaultMarkerWithHue(
-    //         BitmapDescriptor.hueAzure,
-    //       ),
-    //     ),
-    //   );
-    // }
-
     setState(() {});
+  }
+
+  String selectedCategory = 'historical';
+
+  List<Marker> getMarkerOfPlace() {
+    Map<String, String>? selectedPlace =
+        places.firstWhere((place) => place['title'] == widget.title);
+
+    if (selectedPlace != null) {
+      double latitude = double.parse(selectedPlace['latitude']!);
+      double longitude = double.parse(selectedPlace['longitude']!);
+
+      return [
+        Marker(
+          markerId: MarkerId(selectedPlace['title']!),
+          position: LatLng(latitude, longitude),
+          icon: BitmapDescriptor.defaultMarker,
+          onTap: () => infoWindow(latitude, longitude, selectedPlace),
+        ),
+      ];
+    } else {
+      return [];
+    }
+  }
+
+  List<Marker> getFilteredMarkers() {
+    return markers.where((marker) {
+      Map<String, String>? place = places.firstWhere(
+        (place) => marker.markerId.value == place['title'],
+      );
+      if (place['subtype'] == 'museum' ||
+          place['subtype'] == 'bastion' ||
+          place['subtype'] == 'others')
+        return selectedCategory == 'historical';
+      else
+        return place['subtype'] == selectedCategory;
+    }).toList();
   }
 
   @override
@@ -249,7 +348,8 @@ class _MapScreenState extends State<MapScreen>
     super.initState();
     getCurrentLocation();
     loadData();
-    // getPolyPoints();
+    getPolyPoints();
+    // showPlaceOnMap(title);
     DefaultAssetBundle.of(context)
         .loadString('assets/maptheme/theme.json')
         .then((value) {
@@ -257,65 +357,117 @@ class _MapScreenState extends State<MapScreen>
     });
   }
 
-  final GlobalKey avatarGlowKey = GlobalKey();
-
-  Future<Uint8List> getBytesFromMicIcon() async {
-    final avatarGlow = AvatarGlow(
-      key: avatarGlowKey,
-      glowRadiusFactor: 0.7,
-      animate: true,
-      duration: Duration(milliseconds: 1000),
-      repeat: true,
-      glowColor: kColor1,
-      startDelay: Duration(milliseconds: 1000),
-      child: Icon(
-        Icons.mic,
-        color: kColor1,
-        size: 30,
-      ),
-    );
-
-    final avatarGlowImage = await _captureImage(avatarGlow);
-
-    return Uint8List.fromList(avatarGlowImage);
-  }
-
-  Future<Uint8List> _captureImage(Widget widget) async {
-    final RenderRepaintBoundary boundary = RenderRepaintBoundary();
-    final RenderBox renderBox = (widget.key as GlobalKey)
-        .currentContext!
-        .findRenderObject() as RenderBox;
-    final ui.Image img = await boundary.toImage(pixelRatio: 3.0);
-    final ByteData? byteData =
-        await img.toByteData(format: ui.ImageByteFormat.png);
-    final Uint8List uint8List = byteData!.buffer.asUint8List();
-
-    return uint8List;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: CustomAppBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 8.0),
-        child: FloatingActionButton(
-            backgroundColor: Color.fromARGB(255, 252, 125, 93),
-            child: Icon(Icons.my_location),
-            onPressed: currentLocation == null
-                ? () {}
-                : () async {
-                    GoogleMapController currentcontroller =
-                        await controller.future;
-                    currentcontroller.animateCamera(
-                        CameraUpdate.newCameraPosition(CameraPosition(
-                            target: LatLng(currentLocation!.latitude!,
-                                currentLocation!.longitude!),
-                            zoom: 16)));
-                    setState(() {});
-                  }),
-      ),
+      appBar: widget.title != null ? CustomAppBar() : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+      floatingActionButton: widget.title == null
+          ? Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(top: 50),
+                  child: SpeedDial(
+                    // mini: true,
+                    animatedIcon: AnimatedIcons.menu_close,
+                    direction: SpeedDialDirection.down,
+                    backgroundColor: kColor2,
+                    overlayOpacity: 0,
+                    children: [
+                      SpeedDialChild(
+                        foregroundColor: kColor1,
+                        child: Icon(Icons.account_balance),
+                        // label: 'Historical',
+                        onTap: () {
+                          setState(() {
+                            selectedCategory = 'historical';
+                          });
+                        },
+                      ),
+                      SpeedDialChild(
+                        foregroundColor: kColor1,
+                        child: Icon(Icons.restaurant),
+                        // label: 'Restaurants',
+                        onTap: () {
+                          setState(() {
+                            selectedCategory = 'restaurant';
+                          });
+                        },
+                      ),
+                      SpeedDialChild(
+                        foregroundColor: kColor1,
+                        child: Icon(Icons.pedal_bike),
+                        // label: 'Activities',
+                        onTap: () {
+                          setState(() {
+                            selectedCategory = 'activity';
+                          });
+                        },
+                      ),
+                      SpeedDialChild(
+                        foregroundColor: kColor1,
+                        child: Icon(Icons.shopping_cart),
+                        // label: 'Shops',
+                        onTap: () {
+                          setState(() {
+                            selectedCategory = 'shop';
+                          });
+                        },
+                      ),
+                      SpeedDialChild(
+                        foregroundColor: kColor1,
+                        child: Icon(Icons.h_mobiledata_rounded),
+                        // label: 'Hotels',
+                        onTap: () {
+                          setState(() {
+                            selectedCategory = 'hotel';
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: FloatingActionButton(
+                      mini: true,
+                      backgroundColor: kColor2,
+                      child: Icon(Icons.my_location),
+                      onPressed: currentLocation == null
+                          ? () {}
+                          : () async {
+                              GoogleMapController currentcontroller =
+                                  await controller.future;
+                              currentcontroller.animateCamera(
+                                  CameraUpdate.newCameraPosition(CameraPosition(
+                                      target: LatLng(currentLocation!.latitude!,
+                                          currentLocation!.longitude!),
+                                      zoom: 16)));
+                              setState(() {});
+                            }),
+                ),
+              ],
+            )
+          : Container(
+              margin: EdgeInsets.only(bottom: 40),
+              child: FloatingActionButton(
+                  // mini: true,
+                  backgroundColor: kColor2,
+                  child: Icon(Icons.my_location),
+                  onPressed: currentLocation == null
+                      ? () {}
+                      : () async {
+                          GoogleMapController currentcontroller =
+                              await controller.future;
+                          currentcontroller.animateCamera(
+                              CameraUpdate.newCameraPosition(CameraPosition(
+                                  target: LatLng(currentLocation!.latitude!,
+                                      currentLocation!.longitude!),
+                                  zoom: 16)));
+                          setState(() {});
+                        }),
+            ),
       body: currentLocation == null
           ? Center(
               child: CircularProgressIndicator(
@@ -323,6 +475,10 @@ class _MapScreenState extends State<MapScreen>
             ))
           : Stack(children: [
               GoogleMap(
+                myLocationButtonEnabled: false,
+                myLocationEnabled: true,
+                mapToolbarEnabled: false,
+                compassEnabled: false,
                 zoomControlsEnabled: false,
                 onMapCreated: (GoogleMapController controller) {
                   controller.setMapStyle(mapStyle);
@@ -330,15 +486,19 @@ class _MapScreenState extends State<MapScreen>
                   customInfoWindowController.googleMapController = controller;
                 },
                 initialCameraPosition: CameraPosition(target: center, zoom: 16),
-                // polylines: {
-                //   Polyline(
-                //     polylineId: PolylineId('route'),
-                //     points: polylineCoordinates,
-                //     color: Colors.red,
-                //     width: 5,
-                //   ),
-                // },
-                markers: Set<Marker>.from(markers),
+                polylines: {
+                  Polyline(
+                    polylineId: PolylineId('route'),
+                    points: polylineCoordinates,
+                    color: Colors.red,
+                    width: 5,
+                  ),
+                },
+                // Set<Polyline>.of(polylines.values),
+                // markers: Set<Marker>.from(markers),
+                markers: widget.title != null
+                    ? Set<Marker>.from(getMarkerOfPlace())
+                    : Set<Marker>.from(getFilteredMarkers()),
                 onTap: (position) {
                   customInfoWindowController.hideInfoWindow!();
                 },
@@ -348,8 +508,8 @@ class _MapScreenState extends State<MapScreen>
               ),
               CustomInfoWindow(
                 controller: customInfoWindowController,
-                height: 160,
-                width: 150,
+                height: 230,
+                width: 200,
                 offset: 50,
               )
             ]),

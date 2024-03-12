@@ -25,47 +25,50 @@ class HistoryScreen extends StatelessWidget {
       // bottomNavigationBar: CustomNavigationBar(),
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(height: 20.0),
-              Center(child: CustomSearchBar()),
-              SizedBox(height: 20.0),
-              SubTitles(subTitle: 'Museums'),
-              SizedBox(
-                height: 20,
-              ),
-              CarouselCardItems(
-                placeList: filterPlacesBySubtype('museum'),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SubTitles(subTitle: "Bastions"),
-              SizedBox(
-                height: 20,
-              ),
-              CarouselCardItems(
-                placeList: filterPlacesBySubtype('bastion'),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SubTitles(subTitle: "Others"),
-              SizedBox(
-                height: 20,
-              ),
-              CarouselCardItems(
-                placeList: filterPlacesBySubtype('others'),
-              ),
-              SizedBox(
-                height: 40,
-              )
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(height: 20.0),
+            Center(child: CustomSearchBar()),
+            SizedBox(height: 20.0),
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: SubTitles(subTitle: 'Museums')),
+            SizedBox(
+              height: 20,
+            ),
+            CarouselCardItems(
+              placeList: filterPlacesBySubtype('museum'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: SubTitles(subTitle: "Bastions")),
+            SizedBox(
+              height: 20,
+            ),
+            CarouselCardItems(
+              placeList: filterPlacesBySubtype('bastion'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: SubTitles(subTitle: "Others")),
+            SizedBox(
+              height: 20,
+            ),
+            CarouselCardItems(
+              placeList: filterPlacesBySubtype('others'),
+            ),
+            SizedBox(
+              height: 40,
+            )
+          ],
         ),
       ),
     );

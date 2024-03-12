@@ -24,47 +24,50 @@ class CommercialScreen extends StatelessWidget {
       // bottomNavigationBar: CustomNavigationBar(),
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(height: 20.0),
-              Center(child: CustomSearchBar()),
-              SizedBox(height: 20.0),
-              SubTitles(subTitle: 'Hotels'),
-              SizedBox(
-                height: 20,
-              ),
-              CarouselCardItems(
-                placeList: filterPlacesBySubtype('hotel'),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SubTitles(subTitle: "Resturants"),
-              SizedBox(
-                height: 20,
-              ),
-              CarouselCardItems(
-                placeList: filterPlacesBySubtype('restaurant'),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SubTitles(subTitle: "Shops"),
-              SizedBox(
-                height: 20,
-              ),
-              CarouselCardItems(
-                placeList: filterPlacesBySubtype('shop'),
-              ),
-              SizedBox(
-                height: 40,
-              ),
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(height: 20.0),
+            Center(child: CustomSearchBar()),
+            SizedBox(height: 20.0),
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: SubTitles(subTitle: 'Hotels')),
+            SizedBox(
+              height: 20,
+            ),
+            CarouselCardItems(
+              placeList: filterPlacesBySubtype('hotel'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: SubTitles(subTitle: "Resturants")),
+            SizedBox(
+              height: 20,
+            ),
+            CarouselCardItems(
+              placeList: filterPlacesBySubtype('restaurant'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: SubTitles(subTitle: "Shops")),
+            SizedBox(
+              height: 20,
+            ),
+            CarouselCardItems(
+              placeList: filterPlacesBySubtype('shop'),
+            ),
+            SizedBox(
+              height: 40,
+            ),
+          ],
         ),
       ),
     );

@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fort_roam/components/app_bar2.dart';
+import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/components/gesture_card.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:fort_roam/components/navigation_bar.dart';
 import 'package:fort_roam/components/search_bar.dart';
 import 'package:fort_roam/components/sub_titles.dart';
+import 'package:fort_roam/screens/map_screen.dart';
+import 'package:page_transition/page_transition.dart';
 
 class PlaceScreen extends StatelessWidget {
-  PlaceScreen(
-      {super.key,
-      required this.image,
-      required this.title,
-      required this.imageHeroTag,
-      required this.titleHeroTag});
+  PlaceScreen({
+    super.key,
+    required this.image,
+    required this.title,
+    required this.imageHeroTag,
+    required this.titleHeroTag,
+    // this.onShowPlaceOnMap,
+  });
 
   static String id = 'place_screen';
 
@@ -21,14 +26,25 @@ class PlaceScreen extends StatelessWidget {
   final String title;
   final UniqueKey imageHeroTag;
   final UniqueKey titleHeroTag;
+  // Function(String)? onShowPlaceOnMap;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.volume_up, color: Colors.white, size: 30.0),
-        backgroundColor: Color.fromRGBO(226, 94, 62, 1),
+        onPressed: () {
+          Navigator.push(
+              context,
+              PageTransition(
+                  child: MapScreen(
+                    title: title,
+                  ),
+                  type: PageTransitionType.bottomToTop,
+                  duration: Duration(milliseconds: 500),
+                  reverseDuration: Duration(milliseconds: 500)));
+        },
+        child: Icon(Icons.location_on, color: Colors.white, size: 30.0),
+        backgroundColor: kColor1,
         elevation: 5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
@@ -58,7 +74,7 @@ class PlaceScreen extends StatelessWidget {
                           tag: imageHeroTag,
                           child: Image.asset(
                             image,
-                            fit: BoxFit.fill,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),

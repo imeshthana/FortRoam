@@ -69,31 +69,25 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Hero(
-                tag: 'logo',
-                child: Container(
-                    child: Image.asset('images/logo.png'), height: 75.0),
-              ),
+              Container(
+                  child: Image.asset('images/logo.png'), height: 75.0),
               SizedBox(
                 height: 20,
               ),
-              Hero(
-                tag: 'title',
-                child: Text(
-                  'FortRoam',
-                  style: TextStyle(
-                    color: Colors.orange[800],
-                    fontWeight: FontWeight.bold,
-                    fontSize: 35,
-                    shadows: [
-                      BoxShadow(
-                        color: const Color.fromARGB(255, 154, 147, 147),
-                        offset: Offset(2.0, 2.0),
-                        blurRadius: 3.0,
-                        spreadRadius: 1.0,
-                      ),
-                    ],
-                  ),
+              Text(
+                'FortRoam',
+                style: TextStyle(
+                  color: Colors.orange[800],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 35,
+                  shadows: [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 154, 147, 147),
+                      offset: Offset(2.0, 2.0),
+                      blurRadius: 3.0,
+                      spreadRadius: 1.0,
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 10.0),

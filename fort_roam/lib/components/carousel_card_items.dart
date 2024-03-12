@@ -17,14 +17,16 @@ class CarouselCardItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.45,
       child: CarouselSlider(
           carouselController: scrollController,
           options: CarouselOptions(
-            initialPage: 1,
-            viewportFraction: 0.75,
-            enableInfiniteScroll: false,
-            height: MediaQuery.of(context).size.height * 0.75,
+            pageSnapping: false,
+            initialPage: 0,
+            enlargeFactor: 0.4,
+            viewportFraction: 0.65,
+            enableInfiniteScroll: true,
+            height: MediaQuery.of(context).size.height * 0.65,
             enlargeCenterPage: true,
             onPageChanged: (index, reason) => scrollController.animateToPage(
                 index,

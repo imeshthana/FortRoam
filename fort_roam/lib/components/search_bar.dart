@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:fort_roam/components/constants.dart';
 
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({
@@ -12,13 +13,13 @@ class CustomSearchBar extends StatelessWidget {
       width: 220.0,
       margin: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 252, 125, 93),
+        color: kColor2,
         borderRadius: BorderRadius.circular(20.0),
       ),
       child: TextField(
-        textAlign: TextAlign.center,
         decoration: InputDecoration(
           hintText: 'Search',
+          alignLabelWithHint: true,
           hintStyle: TextStyle(
             color: Colors.white,
             letterSpacing: 10.0,
