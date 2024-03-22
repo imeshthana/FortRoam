@@ -8,6 +8,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/components/navigation_bar.dart';
+import 'package:fort_roam/dbHelper/mongodb.dart';
 import 'package:fort_roam/screens/place_screen.dart';
 import 'package:location/location.dart';
 import 'package:page_transition/page_transition.dart';
@@ -18,9 +19,10 @@ import 'dart:ui' as ui;
 import 'package:custom_info_window/custom_info_window.dart';
 
 class MapScreen extends StatefulWidget {
-  MapScreen({this.title});
+  MapScreen({this.title, required this.data});
 
   final String? title;
+  final List<Map<String, dynamic>> data;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -42,39 +44,14 @@ class _MapScreenState extends State<MapScreen>
 
   final Completer<GoogleMapController> controller = Completer();
 
+  // List<Map<String, dynamic>> data = [];
+
+  // getData() async {
+  //   data = await MongoDatabase.getData();
+  // }
+
   static const LatLng center =
       const LatLng(6.028320555913446, 80.21670426593813);
-
-  List<LatLng> polylineCoordinates = [];
-  Map<PolylineId, Polyline> polylines = {};
-  PolylinePoints polylinePoints = PolylinePoints();
-
-  getPolyPoints() async {
-    PolylinePoints polylinePoints = PolylinePoints();
-
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      "AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0",
-      PointLatLng(7.2908125249864995, 80.6330677699703),
-      PointLatLng(7.284171810907195, 80.62633006135113),
-    );
-
-    if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-      // addPolyLines();
-      setState(() {});
-    }
-  }
-
-  addPolyLines() {
-    PolylineId id = PolylineId('route');
-    Polyline polyline = Polyline(
-        polylineId: id, color: Colors.red, points: polylineCoordinates);
-    polylines[id] = polyline;
-
-    setState(() {});
-  }
 
   LocationData? currentLocation;
 
@@ -87,7 +64,7 @@ class _MapScreenState extends State<MapScreen>
     });
   }
 
-  infoWindow(double latitude, double longitude, Map<String, String> place) {
+  infoWindow(double latitude, double longitude, Map<String, dynamic> place) {
     final UniqueKey titleHeroTag = UniqueKey();
     final UniqueKey imageHeroTag = UniqueKey();
     customInfoWindowController.addInfoWindow!(
@@ -169,10 +146,13 @@ class _MapScreenState extends State<MapScreen>
                                 title: place['title']!,
                                 titleHeroTag: titleHeroTag,
                                 imageHeroTag: imageHeroTag,
+                                onShowPlaceOnMap: true,
+                                data: widget.data,
                               ),
-                              type: PageTransitionType.scale,
+                              type: PageTransitionType.bottomToTop,
                               alignment: Alignment.center,
-                              duration: Duration(milliseconds: 300),
+                              duration: Duration(milliseconds: 500),
+                              reverseDuration: Duration(milliseconds: 500),
                             ));
                       },
                       height: 2,
@@ -190,7 +170,18 @@ class _MapScreenState extends State<MapScreen>
                     shape: CircleBorder(),
                     child: MaterialButton(
                       padding: EdgeInsets.all(0.5),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                child: MapScreen(
+                                  title: place['title']!,
+                                  data: widget.data,
+                                ),
+                                type: PageTransitionType.bottomToTop,
+                                duration: Duration(milliseconds: 500),
+                                reverseDuration: Duration(milliseconds: 500)));
+                      },
                       child: Icon(
                         Icons.directions,
                         color: Colors.white,
@@ -232,7 +223,7 @@ class _MapScreenState extends State<MapScreen>
     final Uint8List mapIcon6 =
         await getBytesFromMapIcons('assets/mapicons/activity.png', 75);
 
-    for (var place in places) {
+    for (var place in widget.data) {
       List<Marker> placeMarkers = [];
 
       double latitude = double.parse(place['latitude']!);
@@ -302,15 +293,14 @@ class _MapScreenState extends State<MapScreen>
 
       markers.addAll(placeMarkers);
     }
-
     setState(() {});
   }
 
   String selectedCategory = 'historical';
 
   List<Marker> getMarkerOfPlace() {
-    Map<String, String>? selectedPlace =
-        places.firstWhere((place) => place['title'] == widget.title);
+    Map<String, dynamic> selectedPlace =
+        widget.data.firstWhere((place) => place['title'] == widget.title);
 
     if (selectedPlace != null) {
       double latitude = double.parse(selectedPlace['latitude']!);
@@ -329,9 +319,51 @@ class _MapScreenState extends State<MapScreen>
     }
   }
 
+  List<LatLng> polylineCoordinates = [];
+  // Map<PolylineId, Polyline> polylines = {};
+  Set<Polyline> polylines = {};
+  PolylinePoints polylinePoints = PolylinePoints();
+
+  getPolyPoints() async {
+    Map<String, dynamic> selectedPlace =
+        widget.data.firstWhere((place) => place['title'] == widget.title);
+
+    double latitude = double.parse(selectedPlace['latitude']!);
+    double longitude = double.parse(selectedPlace['longitude']!);
+
+    PolylinePoints polylinePoints = PolylinePoints();
+
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      "AIzaSyD2wKv_Xj01cu7xfQ5Cf0Te5sroeB5K6iE",
+      PointLatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+      PointLatLng(latitude, longitude),
+    );
+
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+
+      addPolyLines();
+      // setState(() {});
+    }
+  }
+
+  addPolyLines() {
+    PolylineId id = PolylineId('route');
+    Polyline polyline = Polyline(
+        polylineId: id,
+        color: const Color.fromARGB(255, 59, 130, 254),
+        points: polylineCoordinates,
+        width: 4);
+    // polylines[id] = polyline;
+    polylines.add(polyline);
+    setState(() {});
+  }
+
   List<Marker> getFilteredMarkers() {
     return markers.where((marker) {
-      Map<String, String>? place = places.firstWhere(
+      Map<String, dynamic> place = widget.data.firstWhere(
         (place) => marker.markerId.value == place['title'],
       );
       if (place['subtype'] == 'museum' ||
@@ -348,8 +380,9 @@ class _MapScreenState extends State<MapScreen>
     super.initState();
     getCurrentLocation();
     loadData();
-    getPolyPoints();
-    // showPlaceOnMap(title);
+    if (widget.title != null) {
+      getPolyPoints();
+    }
     DefaultAssetBundle.of(context)
         .loadString('assets/maptheme/theme.json')
         .then((value) {
@@ -429,7 +462,7 @@ class _MapScreenState extends State<MapScreen>
                 ),
                 Spacer(),
                 Container(
-                  margin: EdgeInsets.only(bottom: 20),
+                  margin: EdgeInsets.only(bottom: 0),
                   child: FloatingActionButton(
                       mini: true,
                       backgroundColor: kColor2,
@@ -450,7 +483,7 @@ class _MapScreenState extends State<MapScreen>
               ],
             )
           : Container(
-              margin: EdgeInsets.only(bottom: 40),
+              margin: EdgeInsets.only(bottom: 20),
               child: FloatingActionButton(
                   // mini: true,
                   backgroundColor: kColor2,
@@ -484,17 +517,22 @@ class _MapScreenState extends State<MapScreen>
                   controller.setMapStyle(mapStyle);
                   this.controller.complete(controller);
                   customInfoWindowController.googleMapController = controller;
+                  getPolyPoints();
                 },
                 initialCameraPosition: CameraPosition(target: center, zoom: 16),
-                polylines: {
-                  Polyline(
-                    polylineId: PolylineId('route'),
-                    points: polylineCoordinates,
-                    color: Colors.red,
-                    width: 5,
-                  ),
-                },
-                // Set<Polyline>.of(polylines.values),
+                // polylines:
+                //   Polyline(
+                //     polylineId: PolylineId('route'),
+                //     points: polylineCoordinates,
+                //     color: Colors.red,
+                //     width: 5,
+                //   ),
+                // },
+                // polylines: widget.title != null
+                //     ? Set<Polyline>.from(getPolyPoints())
+                //     : {},
+                polylines: polylines,
+
                 // markers: Set<Marker>.from(markers),
                 markers: widget.title != null
                     ? Set<Marker>.from(getMarkerOfPlace())

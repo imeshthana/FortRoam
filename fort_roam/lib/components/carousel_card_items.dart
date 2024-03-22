@@ -10,7 +10,7 @@ class CarouselCardItems extends StatelessWidget {
     required this.placeList,
   });
 
-  final List<Map<String, String>> placeList;
+  final List<Map<String, dynamic>> placeList;
 
   final scrollController = CarouselController();
 
@@ -51,16 +51,18 @@ class CarouselCardItems extends StatelessWidget {
                   Navigator.push(
                       context,
                       PageTransition(
-                        child: PlaceScreen(
-                          image: placeList[index]['image']!,
-                          title: placeList[index]['title']!,
-                          titleHeroTag: titleHeroTag,
-                          imageHeroTag: imageHeroTag,
-                        ),
-                        type: PageTransitionType.scale,
-                        alignment: Alignment.center,
-                        duration: Duration(milliseconds: 300),
-                      ));
+                          child: PlaceScreen(
+                            image: placeList[index]['image']!.toString(),
+                            title: placeList[index]['title']!.toString(),
+                            titleHeroTag: titleHeroTag,
+                            imageHeroTag: imageHeroTag,
+                            onShowPlaceOnMap: true,
+                            data: placeList,
+                          ),
+                          type: PageTransitionType.scale,
+                          alignment: Alignment.center,
+                          duration: Duration(milliseconds: 500),
+                          reverseDuration: Duration(microseconds: 500)));
                 },
                 child: Card(
                   elevation: 5,
@@ -78,7 +80,7 @@ class CarouselCardItems extends StatelessWidget {
                             child: Hero(
                               tag: imageHeroTag,
                               child: Image.asset(
-                                placeList[index]['image']!,
+                                placeList[index]['image']!.toString(),
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                               ),
@@ -92,7 +94,7 @@ class CarouselCardItems extends StatelessWidget {
                         child: Hero(
                           tag: titleHeroTag,
                           child: Text(
-                            placeList[index]['title']!,
+                            placeList[index]['title']!.toString(),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,

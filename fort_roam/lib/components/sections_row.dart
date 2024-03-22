@@ -8,7 +8,10 @@ import 'package:fort_roam/screens/map_screen.dart';
 class SectionsRow extends StatelessWidget {
   const SectionsRow({
     super.key,
+    required this.data
   });
+
+  final List<Map<String, dynamic>> data;
 
   @override
   Widget build(BuildContext context) {
@@ -16,22 +19,22 @@ class SectionsRow extends StatelessWidget {
       margin: EdgeInsets.only(left: 20, right: 20),
       child: Row(children: [
         SectionIconButton(
-          route: HistoryScreen(),
+          route: HistoryScreen(data: data),
           icon: Icons.account_balance,
           section: 'Historical',
         ),
         SectionIconButton(
-          route: CommercialScreen(),
+          route: CommercialScreen(data: data),
           icon: Icons.restaurant,
           section: 'Local',
         ),
         SectionIconButton(
-          route: ActivityScreen(),
+          route: ActivityScreen(data: data),
           icon: Icons.directions_run,
           section: 'Activity',
         ),
         SectionIconButton(
-          route: MapScreen(),
+          route: MapScreen(data: data,),
           icon: Icons.safety_check,
           section: 'Support',
         ),

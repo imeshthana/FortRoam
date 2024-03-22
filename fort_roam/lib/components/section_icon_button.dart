@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fort_roam/components/constants.dart';
 import 'package:page_transition/page_transition.dart';
 
 class SectionIconButton extends StatelessWidget {
@@ -27,11 +28,12 @@ class SectionIconButton extends StatelessWidget {
             Material(
               elevation: 10.0,
               shape: CircleBorder(),
-              color: const Color.fromRGBO(226, 94, 62, 1),
+              color: kColor1,
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(12.5),
                 child: Icon(
                   icon,
+                  size: MediaQuery.of(context).size.height * 0.030,
                   color: Colors.white,
                 ),
               ),

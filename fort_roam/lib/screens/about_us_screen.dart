@@ -27,12 +27,12 @@ class AboutUsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(height: 20.0),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.035),
                 SubTitles(subTitle: 'About Us'),
-                Center(
-                  child: Container(
-                    width: 300,
-                    height: 250.0,
+                Container(
+                  width: MediaQuery.of(context).size.height * 0.45,
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  child: Center(
                     child: Image.asset(
                       'images/galle_heritage_logo.jpg',
                       height: double.infinity,
@@ -40,7 +40,7 @@ class AboutUsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.025),
                 Center(
                   child: Column(
                     children: [
@@ -56,17 +56,23 @@ class AboutUsScreen extends StatelessWidget {
                                 Text(
                                   'Our Vision',
                                   style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize:
+                                          MediaQuery.of(context).size.height *
+                                              0.025,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
-                                  height: 10,
+                                  height: MediaQuery.of(context).size.height *
+                                      0.025,
                                 ),
                                 Center(
                                   child: Text(
                                     'The Living World Heritage Galle Fort to be the most Excellent Cultural Heritage City in Sri Lanka',
-                                    style: TextStyle(fontSize: 15),
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.02),
                                     textAlign: TextAlign.center,
                                   ),
                                 )
@@ -74,7 +80,7 @@ class AboutUsScreen extends StatelessWidget {
                             ),
                           )),
                       SizedBox(
-                        height: 20,
+                        height: 30,
                       ),
                       Container(
                           decoration: BoxDecoration(
@@ -88,17 +94,23 @@ class AboutUsScreen extends StatelessWidget {
                                 Text(
                                   'Our Mission',
                                   style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize:
+                                          MediaQuery.of(context).size.height *
+                                              0.025,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
-                                  height: 10,
+                                  height: MediaQuery.of(context).size.height *
+                                      0.025,
                                 ),
                                 Center(
                                   child: Text(
                                     'To conserve Galle Fort as a Historic Cultural Centre and a Site of Archaeological',
-                                    style: TextStyle(fontSize: 15),
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.02),
                                     textAlign: TextAlign.center,
                                   ),
                                 )
@@ -146,8 +158,99 @@ class AboutUsScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
+                  height: 40,
+                ),
+                SubTitles(subTitle: 'Developed By'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      width: MediaQuery.of(context).size.height * 0.12,
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      child: Image.asset(
+                        'images/ruhuna_logo.jpg',
+                      ),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.height * 0.16,
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      child: Image.asset(
+                        'images/efac_logo.jpg',
+                      ),
+                    ),
+                  ],
+                ),
+                // SizedBox(
+                //   height: 20,
+                // ),
+                Container(
+                    decoration: BoxDecoration(
+                      color: kColor3,
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        children: [
+                          Text(
+                            'A Project of',
+                            style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.025,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                          Center(
+                            child: Text(
+                              'Department of Computer Engineering',
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                  fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.005,
+                          ),
+                          Center(
+                            child: Text(
+                              'Faculty of Engineering',
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                  fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.005,
+                          ),
+                          Center(
+                            child: Text(
+                              'University of Ruhuna',
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                  fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        ],
+                      ),
+                    )),
+                SizedBox(
                   height: 50,
-                )
+                ),
               ],
             ),
           ),

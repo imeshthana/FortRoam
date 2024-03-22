@@ -4,13 +4,16 @@ import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/screens/about_us_screen.dart';
 import 'package:fort_roam/screens/favourites_screen.dart';
 import 'package:fort_roam/screens/home_screen.dart';
+import 'package:fort_roam/screens/voice_screen.dart';
 import 'package:fort_roam/screens/map_screen.dart';
 import 'package:fort_roam/screens/support_screen.dart';
 import 'package:fort_roam/screens/voice_screen.dart';
+import 'package:page_transition/page_transition.dart';
 
 class MainLayout extends StatefulWidget {
-  MainLayout({super.key});
+  MainLayout({super.key, required this.data});
 
+  final List<Map<String, dynamic>> data;
   static String id = 'main_layout';
 
   @override
@@ -27,10 +30,16 @@ class _MainLayoutState extends State<MainLayout> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, VoiceScreen.id);
+          Navigator.push(
+              context,
+              PageTransition(
+                  child: VoiceScreen(data: widget.data),
+                  type: PageTransitionType.bottomToTop,
+                  duration: Duration(milliseconds: 500),
+                  reverseDuration: Duration(milliseconds: 500)));
         },
         child: Icon(
-          FontAwesomeIcons.microphone,
+          FontAwesomeIcons.searchLocation,
           color: Colors.white,
         ),
         backgroundColor: kColor1,
@@ -46,9 +55,13 @@ class _MainLayoutState extends State<MainLayout> {
           );
         }),
         children: [
-          HomeScreen(),
-          FavouritesScreen(),
-          MapScreen(),
+          HomeScreen(data: widget.data),
+          FavouritesScreen(
+            data: widget.data,
+          ),
+          MapScreen(
+            data: widget.data,
+          ),
           AboutUsScreen(),
         ],
       ),
@@ -79,7 +92,7 @@ class _MainLayoutState extends State<MainLayout> {
   Widget buildNavItem(IconData icon, String label, int index) {
     return InkWell(
       onTap: () {
-        _navigateToPage(index);
+        navigateToPage(index);
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -116,22 +129,7 @@ class _MainLayoutState extends State<MainLayout> {
     );
   }
 
-  String _getIconName(int index) {
-    switch (index) {
-      case 0:
-        return 'Home';
-      case 1:
-        return 'Favourites';
-      case 2:
-        return 'Map';
-      case 3:
-        return 'About Us';
-      default:
-        return '';
-    }
-  }
-
-  void _navigateToPage(int page) {
+  void navigateToPage(int page) {
     setState(() {
       currentPage = page;
       _page.animateToPage(

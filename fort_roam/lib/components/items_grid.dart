@@ -8,7 +8,7 @@ class ItemsGrid extends StatelessWidget {
     required this.places,
   });
 
-  final List<Map<String, String>> places;
+  final List<Map<String, dynamic>> places;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class ItemsGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
+          crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 20),
       itemCount: places.length,
       itemBuilder: (context, index) {
         UniqueKey imageHeroTag = UniqueKey();
@@ -32,6 +32,8 @@ class ItemsGrid extends StatelessWidget {
                     title: places[index]['title']!,
                     titleHeroTag: titleHeroTag,
                     imageHeroTag: imageHeroTag,
+                    onShowPlaceOnMap: true,
+                    data: places,
                   ),
                   type: PageTransitionType.scale,
                   alignment: Alignment.center,
@@ -40,7 +42,10 @@ class ItemsGrid extends StatelessWidget {
           },
           child: Card(
             elevation: 0,
-            margin: EdgeInsets.only(left: 10, right: 10),
+            margin: EdgeInsets.only(
+              left: 10,
+              right: 10,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),

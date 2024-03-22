@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fort_roam/dbHelper/MongodbModel.dart';
 import 'package:fort_roam/dbHelper/display.dart';
 import 'package:fort_roam/dbHelper/mongodb.dart';
 import 'package:fort_roam/screens/about_us_screen.dart';
@@ -13,32 +14,41 @@ import 'package:fort_roam/screens/support_screen.dart';
 import 'package:fort_roam/screens/activity_screen.dart';
 import 'package:fort_roam/screens/commercial_screen.dart';
 import 'package:fort_roam/screens/voice_screen.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await MongoDatabase.connect();
-  runApp(const FortRoamApp());
+void main() async {
+  await Hive.initFlutter();
+  var box = await Hive.openBox('favBox');
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await MongoDatabase.connect();
+  List<Map<String, dynamic>> data = await MongoDatabase.getData();
+  runApp(FortRoamApp(data: data));
 }
 
 class FortRoamApp extends StatelessWidget {
-  const FortRoamApp({super.key});
+  FortRoamApp({super.key, required this.data});
+
+  final List<Map<String, dynamic>> data;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: WelcomeScreen.id,
         routes: {
-          WelcomeScreen.id: (context) => WelcomeScreen(),
+          WelcomeScreen.id: (context) => WelcomeScreen(data: data),
           // WelcomeScreen.id: (context) => MongoDbDisplay(),
-          HomeScreen.id: (context) => HomeScreen(),
-          HistoryScreen.id: (context) => HistoryScreen(),
-          ActivityScreen.id: (context) => ActivityScreen(),
+          HomeScreen.id: (context) => HomeScreen(data: data),
+          HistoryScreen.id: (context) => HistoryScreen(data: data),
+          ActivityScreen.id: (context) => ActivityScreen(data: data),
           SupportScreen.id: (context) => SupportScreen(),
-          CommercialScreen.id: (context) => CommercialScreen(),
-          FavouritesScreen.id: (context) => FavouritesScreen(),
-          MainLayout.id: (context) => MainLayout(),
-          MapScreen.id: (context) => MapScreen(),
-          VoiceScreen.id: (context) => VoiceScreen(),
+          CommercialScreen.id: (context) => CommercialScreen(data: data),
+          FavouritesScreen.id: (context) => FavouritesScreen(data: data,),
+          MainLayout.id: (context) => MainLayout(data: data),
+          MapScreen.id: (context) => MapScreen(data: data,),
+          VoiceScreen.id: (context) => VoiceScreen(data: data,),
           AboutUsScreen.id: (context) => AboutUsScreen(),
         });
   }

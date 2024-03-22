@@ -10,11 +10,13 @@ import 'package:fort_roam/components/sub_titles.dart';
 import 'package:fort_roam/components/constants.dart';
 
 class CommercialScreen extends StatelessWidget {
-  const CommercialScreen({super.key});
+  const CommercialScreen({super.key, required this.data});
+
+  final List<Map<String, dynamic>> data;
   static String id = 'commercial_screen';
 
-  List<Map<String, String>> filterPlacesBySubtype(String subtype) {
-    return places.where((place) => place['subtype'] == subtype).toList();
+  List<Map<String, dynamic>> filterPlacesBySubtype(String subtype) {
+    return data.where((place) => place['subtype'] == subtype).toList();
   }
 
   @override
@@ -28,8 +30,6 @@ class CommercialScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: 20.0),
-            Center(child: CustomSearchBar()),
             SizedBox(height: 20.0),
             Container(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),

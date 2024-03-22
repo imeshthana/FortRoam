@@ -12,8 +12,10 @@ import 'package:fort_roam/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    List<Map<String, dynamic>> testData = [];
+
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const FortRoamApp());
+    await tester.pumpWidget(FortRoamApp(data: testData));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

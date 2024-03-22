@@ -1,35 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/screens/place_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'dart:math';
 
 class ItemsList extends StatelessWidget {
-  ItemsList({
-    super.key,
-  });
+  ItemsList({super.key, required this.data});
 
-  List<Map<String, String>> cardItems = [
-    {
-      'image': 'images/1.jpg',
-      'title': 'Lighthouse',
-    },
-    {
-      'image': 'images/2.jpg',
-      'title': 'Jewelleries',
-    },
-    {
-      'image': 'images/3.jpg',
-      'title': 'Fort Jump',
-    },
-    {
-      'image': 'images/4.jpg',
-      'title': 'Museum',
-    }
-  ];
+  final List<Map<String, dynamic>> data;
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, dynamic>> cardItems;
+
+    final random = Random();
+    final shuffledPlaces = [...data]..shuffle(random);
+
+    cardItems = shuffledPlaces.take(5).toList();
+
     return Container(
-        height: 200,
+        height: MediaQuery.of(context).size.height * 0.35,
         child: ListView(
             scrollDirection: Axis.horizontal,
             children: List<Widget>.generate(cardItems.length, (index) {
@@ -46,6 +36,8 @@ class ItemsList extends StatelessWidget {
                           title: cardItems[index]['title']!,
                           titleHeroTag: titleHeroTag,
                           imageHeroTag: imageHeroTag,
+                          onShowPlaceOnMap: true,
+                          data: cardItems,
                         ),
                         type: PageTransitionType.scale,
                         alignment: Alignment.center,
@@ -53,7 +45,7 @@ class ItemsList extends StatelessWidget {
                       ));
                 },
                 child: Container(
-                  width: 150.0,
+                  width: MediaQuery.of(context).size.width * 0.4,
                   child: Card(
                     elevation: 0,
                     margin: EdgeInsets.only(left: 0, right: 20),
@@ -62,19 +54,19 @@ class ItemsList extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        Expanded(
-                          child: Material(
-                            elevation: 10.0,
+                        Material(
+                          elevation: 10.0,
+                          borderRadius: BorderRadius.circular(15.0),
+                          child: ClipRRect(
                             borderRadius: BorderRadius.circular(15.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15.0),
-                              child: Hero(
-                                tag: imageHeroTag,
-                                child: Image.asset(
-                                  cardItems[index]['image']!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                ),
+                            child: Hero(
+                              tag: imageHeroTag,
+                              child: Image.asset(
+                                cardItems[index]['image']!,
+                                fit: BoxFit.cover,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.2,
+                                width: double.infinity,
                               ),
                             ),
                           ),

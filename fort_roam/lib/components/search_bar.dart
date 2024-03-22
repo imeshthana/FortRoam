@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:fort_roam/components/constants.dart';
 
 class CustomSearchBar extends StatelessWidget {
-  const CustomSearchBar({
-    super.key,
-  });
+  CustomSearchBar({
+    Key? key,
+     this.onSearch,
+  }) : super(key: key);
 
+  final TextEditingController controller = TextEditingController();
+  final Function(String)? onSearch;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,6 +20,7 @@ class CustomSearchBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.0),
       ),
       child: TextField(
+        controller: controller,
         decoration: InputDecoration(
           hintText: 'Search',
           alignLabelWithHint: true,

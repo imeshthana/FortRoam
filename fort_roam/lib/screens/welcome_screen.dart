@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:fort_roam/screens/home_screen.dart';
 import 'package:fort_roam/screens/main_layout.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:fort_roam/components/constants.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({super.key});
+  const WelcomeScreen({super.key, required this.data});
+
+  final List<Map<String, dynamic>> data;
 
   static String id = 'welcome_screen';
 
@@ -25,10 +28,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       Navigator.push(
           context,
           PageTransition(
-            child: MainLayout(),
+            child: MainLayout(data:  widget.data),
             type: PageTransitionType.bottomToTop,
             duration: Duration(seconds: 2),
           ));
+      // Navigator.pushNamed(context, MainLayout.id);
     });
   }
 
@@ -41,16 +45,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             children: [
               Container(
                 width: double.infinity,
-                height: 250.0,
+                height: MediaQuery.of(context).size.height * 0.3,
                 child: Image.asset(
                   'images/cover.jpg',
                   fit: BoxFit.fill,
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 100.0),
+                margin: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.1,
+                ),
                 width: double.infinity,
-                height: 150.0,
+                height: MediaQuery.of(context).size.height * 0.20,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
@@ -64,22 +70,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ],
           ),
-          SizedBox(height: 120.0),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.175),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                  child: Image.asset('images/logo.png'), height: 75.0),
+                child: Image.asset('images/logo.png'),
+                height: MediaQuery.of(context).size.height * 0.1,
+              ),
               SizedBox(
                 height: 20,
               ),
               Text(
                 'FortRoam',
                 style: TextStyle(
-                  color: Colors.orange[800],
+                  color: kColor1,
                   fontWeight: FontWeight.bold,
-                  fontSize: 35,
+                  fontSize: MediaQuery.of(context).size.height * 0.05,
                   shadows: [
                     BoxShadow(
                       color: const Color.fromARGB(255, 154, 147, 147),
@@ -96,16 +104,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 style: TextStyle(
                   color: Color.fromARGB(255, 79, 78, 78),
                   fontWeight: FontWeight.normal,
-                  fontSize: 15,
+                  fontSize: MediaQuery.of(context).size.height * 0.02,
                   fontStyle: FontStyle.italic,
                 ),
               ),
-              SizedBox(height: 100.0),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.125),
               Visibility(
                 visible: !showProgress,
                 child: Material(
                   elevation: 5.0,
-                  color: const Color.fromRGBO(226, 94, 62, 1),
+                  color: kColor1,
                   borderRadius: BorderRadius.circular(30.0),
                   child: MaterialButton(
                     onPressed: () {
@@ -113,11 +121,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         showProgress = true;
                       });
                     },
-                    minWidth: 200.0,
-                    height: 50.0,
+                    minWidth: MediaQuery.of(context).size.width * 0.65,
+                    height: MediaQuery.of(context).size.height * 0.07,
                     child: Text(
                       'GET STARTED',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: MediaQuery.of(context).size.height * 0.02),
                     ),
                   ),
                 ),
@@ -125,7 +135,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               Visibility(
                 visible: showProgress,
                 child: CircularProgressIndicator(
-                  color: const Color.fromRGBO(226, 94, 62, 1),
+                  color: kColor1,
                 ),
               ),
             ],

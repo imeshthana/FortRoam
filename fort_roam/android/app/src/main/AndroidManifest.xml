@@ -2,6 +2,8 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:label="FortRoam"
@@ -33,7 +35,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0"/> -->
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0"/>
+            android:value="AIzaSyD2wKv_Xj01cu7xfQ5Cf0Te5sroeB5K6iE"/>
+        <!-- <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyB81MWld4KhTT1l7bD5dpIqBBchMgD3c4o"/> -->
     </application>
 </manifest>

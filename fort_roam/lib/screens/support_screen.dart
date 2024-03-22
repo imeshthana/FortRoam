@@ -33,7 +33,7 @@ class SupportScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(height: 20.0),
-                Center(child: CustomSearchBar()),
+                // Center(child: CustomSearchBar()),
                 SizedBox(height: 20.0),
                 SubTitles(subTitle: 'Support Centeres'),
                 SizedBox(
