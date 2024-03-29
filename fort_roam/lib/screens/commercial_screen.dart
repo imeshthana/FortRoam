@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fort_roam/components/app_bar2.dart';
 import 'package:fort_roam/components/items_list.dart';
 import 'package:fort_roam/components/carousel_card_items.dart';
-import 'package:fort_roam/components/gesture_card.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:fort_roam/components/navigation_bar.dart';
-import 'package:fort_roam/components/search_bar.dart';
 import 'package:fort_roam/components/sub_titles.dart';
 import 'package:fort_roam/components/constants.dart';
 

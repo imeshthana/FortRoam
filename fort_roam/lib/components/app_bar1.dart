@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fort_roam/components/constants.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({
@@ -18,7 +19,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Hero(
             tag: 'logo',
             child: Container(
-              height: 30.0,
+              height: MediaQuery.of(context).size.height * 0.05,
               child: Image.asset('images/logo.png'),
             ),
           ),
@@ -30,9 +31,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Text(
               'FortRoam',
               style: TextStyle(
-                color: Color.fromRGBO(239, 108, 0, 1),
+                fontFamily: 'Round',
+                color: kColor1,
                 fontWeight: FontWeight.bold,
-                fontSize: 25,
+                fontSize: MediaQuery.of(context).size.height * 0.035,
                 shadows: [
                   BoxShadow(
                     color: const Color.fromARGB(255, 154, 147, 147),

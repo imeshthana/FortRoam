@@ -16,9 +16,19 @@ class FavPlaces {
     favBox.put('favPlaces', favPlaces);
   }
 
+  void addFavoritePlaceByIndex(int index, String place) {
+    List<String> favPlaces = getFavoritePlaces();
+    favPlaces.insert(index, place);
+    favBox.put('favPlaces', favPlaces);
+  }
+
   void removeFavoritePlace(String place) {
     List<String> favPlaces = getFavoritePlaces();
     favPlaces.remove(place);
     favBox.put('favPlaces', favPlaces);
+  }
+
+  void updateFavoritePlaces(List<String> places) {
+  favBox.put('favPlaces', places);
   }
 }

@@ -4,25 +4,18 @@ import 'package:fort_roam/screens/place_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'dart:math';
 
-class ItemsList extends StatelessWidget {
-  ItemsList({super.key, required this.data});
+class ItemsList2 extends StatelessWidget {
+  ItemsList2({super.key, required this.data});
 
   final List<Map<String, dynamic>> data;
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> cardItems;
-
-    final random = Random();
-    final shuffledPlaces = [...data]..shuffle(random);
-
-    cardItems = shuffledPlaces.take(5).toList();
-
     return Container(
-        height: MediaQuery.of(context).size.height * 0.35,
+        height: MediaQuery.of(context).size.height * 0.3,
         child: ListView(
             scrollDirection: Axis.horizontal,
-            children: List<Widget>.generate(cardItems.length, (index) {
+            children: List<Widget>.generate(data.length, (index) {
               UniqueKey imageHeroTag = UniqueKey();
               UniqueKey titleHeroTag = UniqueKey();
 
@@ -32,11 +25,11 @@ class ItemsList extends StatelessWidget {
                       context,
                       PageTransition(
                         child: PlaceScreen(
-                          // image: cardItems[index]['image']!,
-                          title: cardItems[index]['title']!,
+                          // image: data[index]['image']!,
+                          title: data[index]['title']!,
                           titleHeroTag: titleHeroTag,
                           imageHeroTag: imageHeroTag,
-                          data: cardItems,
+                          data: data,
                           qrPlace: false,
                         ),
                         type: PageTransitionType.scale,
@@ -45,7 +38,7 @@ class ItemsList extends StatelessWidget {
                       ));
                 },
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.4,
+                  width: MediaQuery.of(context).size.width * 0.35,
                   child: Card(
                     elevation: 0,
                     margin: EdgeInsets.only(left: 0, right: 20),
@@ -62,7 +55,7 @@ class ItemsList extends StatelessWidget {
                             child: Hero(
                               tag: imageHeroTag,
                               child: Image.asset(
-                                cardItems[index]['image']!,
+                                data[index]['image']!,
                                 fit: BoxFit.cover,
                                 height:
                                     MediaQuery.of(context).size.height * 0.2,
@@ -77,12 +70,13 @@ class ItemsList extends StatelessWidget {
                           child: Hero(
                             tag: titleHeroTag,
                             child: Text(
-                              cardItems[index]['title']!,
+                              data[index]['title']!,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.height *
-                                      0.02),
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.018,
+                              ),
                             ),
                           ),
                         ),

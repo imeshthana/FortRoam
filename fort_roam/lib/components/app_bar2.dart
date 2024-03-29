@@ -16,7 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: Icon(
             Icons.home_rounded,
             color: const Color.fromRGBO(226, 94, 62, 1),
-            size: 30,
+            size: MediaQuery.of(context).size.height * 0.04,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -30,7 +30,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Hero(
             tag: 'logo',
             child: Container(
-              height: 30.0,
+              height: MediaQuery.of(context).size.height * 0.05,
               child: Image.asset('images/logo.png'),
             ),
           ),
@@ -42,9 +42,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Text(
               'FortRoam',
               style: TextStyle(
-                color: Color.fromRGBO(239, 108, 0, 1),
+                fontFamily: 'Round',
+                color: Color.fromRGBO(255, 115, 0, 1),
                 fontWeight: FontWeight.bold,
-                fontSize: 25,
+                fontSize: MediaQuery.of(context).size.height * 0.035,
                 shadows: [
                   BoxShadow(
                     color: const Color.fromARGB(255, 154, 147, 147),

@@ -506,37 +506,35 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fort_roam/components/app_bar2.dart';
 import 'package:fort_roam/components/constants.dart';
-import 'package:fort_roam/components/gesture_card.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:fort_roam/components/navigation_bar.dart';
-import 'package:fort_roam/components/search_bar.dart';
 import 'package:fort_roam/components/review_list.dart';
 import 'package:fort_roam/components/sub_titles.dart';
 import 'package:fort_roam/components/titles.dart';
-import 'package:fort_roam/dbHelper/MongodbModel.dart';
+import 'package:fort_roam/dbHelper/mongodb_model.dart';
 import 'package:fort_roam/dbHelper/fav_places.dart';
 import 'package:fort_roam/dbHelper/mongodb.dart';
 import 'package:fort_roam/screens/map_screen.dart';
+import 'package:fort_roam/screens/place_map_screen.dart';
 import 'package:hive/hive.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:avatar_glow/avatar_glow.dart';
 
 class PlaceScreen extends StatefulWidget {
   PlaceScreen(
       {super.key,
-      required this.image,
+      // required this.image,
       required this.title,
-      required this.imageHeroTag,
-      required this.titleHeroTag,
-      required this.onShowPlaceOnMap,
+      this.imageHeroTag,
+      this.titleHeroTag,
+      required this.qrPlace,
       required this.data});
 
   static String id = 'place_screen';
 
-  final String image;
+  // final String image;
   final String title;
-  final UniqueKey imageHeroTag;
-  final UniqueKey titleHeroTag;
-  final bool onShowPlaceOnMap;
+  final UniqueKey? imageHeroTag;
+  final UniqueKey? titleHeroTag;
+  final bool qrPlace;
   final List<Map<String, dynamic>> data;
 
   @override
@@ -547,7 +545,9 @@ class _PlaceScreenState extends State<PlaceScreen> {
   late Map<String, dynamic> selectedPlace;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController reviewController = TextEditingController();
-  double rating = 0;
+  late double rating;
+  late double userRating;
+  late List<Object> reviews;
 
   FavPlaces db = FavPlaces();
 
@@ -558,12 +558,44 @@ class _PlaceScreenState extends State<PlaceScreen> {
   getPlace() {
     selectedPlace =
         widget.data.firstWhere((place) => place['title'] == widget.title);
+    reviews = (selectedPlace['reviews'] as List<dynamic>).cast<Object>();
+    rating = double.parse(calculateAverageRating(reviews).toStringAsFixed(1));
+  }
+
+  void submitReview() async {
+    if (nameController.text.isNotEmpty && reviewController.text.isNotEmpty) {
+      Object newReview = {
+        'name': nameController.text,
+        'content': reviewController.text,
+        'rating': userRating,
+      };
+
+      setState(() {
+        selectedPlace['reviews'].add(newReview);
+      });
+
+      nameController.clear();
+      reviewController.clear();
+      setState(() {
+        userRating = 0;
+      });
+
+      await MongoDatabase.addReview(selectedPlace['title'], newReview);
+    }
+  }
+
+  double calculateAverageRating(List<Object> reviews) {
+    if (reviews.isEmpty) return 5;
+    double sum = 0;
+    for (var review in reviews.cast<Map<String, dynamic>>()) {
+      sum += review['rating'];
+    }
+    return sum / reviews.length;
   }
 
   @override
   void initState() {
     super.initState();
-
     getPlace();
     isFavorite = db.getFavoritePlaces().contains(widget.title);
   }
@@ -610,10 +642,16 @@ class _PlaceScreenState extends State<PlaceScreen> {
                     Container(
                       width: double.infinity,
                       height: MediaQuery.of(context).size.height * 0.5,
-                      child: Hero(
-                        tag: widget.imageHeroTag,
+                      child: widget.qrPlace == true
+                          ? Image.asset(
+                          selectedPlace['image']!,
+                          fit: BoxFit.cover,
+                        )
+                          : 
+                      Hero(
+                        tag: widget.imageHeroTag.toString(),
                         child: Image.asset(
-                          widget.image,
+                          selectedPlace['image']!,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -656,8 +694,11 @@ class _PlaceScreenState extends State<PlaceScreen> {
                   height: MediaQuery.of(context).size.height * 0.045,
                 ),
                 Center(
-                    child: Hero(
-                        tag: widget.titleHeroTag,
+                    child: widget.qrPlace == true
+                        ? Titles(title: widget.title)
+                        : 
+                    Hero(
+                        tag: widget.titleHeroTag.toString(),
                         child: Titles(title: widget.title))),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.025,
@@ -680,7 +721,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('3.8',
+                            Text(rating.toString(),
                                 style: TextStyle(
                                   fontSize:
                                       MediaQuery.of(context).size.height * 0.04,
@@ -692,7 +733,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                             Column(
                               children: [
                                 RatingBarIndicator(
-                                  rating: 3.8,
+                                  rating: rating,
                                   itemSize: MediaQuery.of(context).size.height *
                                       0.025,
                                   itemBuilder: (context, _) => Icon(
@@ -728,7 +769,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                             Navigator.push(
                                 context,
                                 PageTransition(
-                                    child: MapScreen(
+                                    child: PlaceMapScreen(
                                       title: widget.title,
                                       data: widget.data,
                                     ),
@@ -766,13 +807,29 @@ class _PlaceScreenState extends State<PlaceScreen> {
                               }
                             });
                           },
-                          color: Colors.grey[300],
+                          color: kColor4,
                           // shape: CircleBorder(),
                           // padding: EdgeInsets.all(12),
-                          icon: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: kColor1,
-                            size: MediaQuery.of(context).size.height * 0.04,
+                          // icon: Icon(
+                          //   isFavorite ? Icons.favorite : Icons.favorite_border,
+                          //   color: kColor1,
+                          //   size: MediaQuery.of(context).size.height * 0.04,
+                          // ),
+                          icon: AvatarGlow(
+                            animate: isFavorite,
+                            glowColor: isFavorite ? kColor1 : kColor4,
+                            glowRadiusFactor: 1,
+                            glowCount: 1,
+                            glowShape: BoxShape.circle,
+                            duration: Duration(milliseconds: 500),
+                            repeat: false,
+                            child: Icon(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: kColor1,
+                              size: MediaQuery.of(context).size.height * 0.04,
+                            ),
                           ),
                         ),
                       ),
@@ -829,7 +886,8 @@ class _PlaceScreenState extends State<PlaceScreen> {
                               height:
                                   MediaQuery.of(context).size.height * 0.025,
                             ),
-                            ReviewList(),
+                            ReviewList(
+                                data: reviews.cast<Map<String, dynamic>>()),
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.04,
                             ),
@@ -902,7 +960,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                         0.025,
                                   ),
                                   RatingBar.builder(
-                                    initialRating: rating,
+                                    initialRating: 0,
                                     minRating: 1,
                                     direction: Axis.horizontal,
                                     allowHalfRating: false,
@@ -914,7 +972,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                     ),
                                     onRatingUpdate: (newRating) {
                                       setState(() {
-                                        rating = newRating;
+                                        userRating = newRating;
                                       });
                                     },
                                   ),
@@ -927,7 +985,9 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                     color: kColor1,
                                     borderRadius: BorderRadius.circular(30.0),
                                     child: MaterialButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        submitReview();
+                                      },
                                       minWidth:
                                           MediaQuery.of(context).size.width *
                                               0.35,
@@ -962,27 +1022,5 @@ class _PlaceScreenState extends State<PlaceScreen> {
         ],
       ),
     );
-  }
-
-  void submitReview() async {
-    if (nameController.text.isNotEmpty && reviewController.text.isNotEmpty) {
-      Map<String, dynamic> newReview = {
-        'name': nameController.text,
-        'content': reviewController.text,
-        'rating': rating,
-      };
-
-      setState(() {
-        selectedPlace['reviews'].add(newReview);
-      });
-
-      nameController.clear();
-      reviewController.clear();
-      setState(() {
-        rating = 0;
-      });
-
-      await MongoDatabase.addReview(selectedPlace['title'], newReview);
-    }
   }
 }

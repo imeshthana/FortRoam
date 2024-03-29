@@ -52,12 +52,13 @@ class CarouselCardItems extends StatelessWidget {
                       context,
                       PageTransition(
                           child: PlaceScreen(
-                            image: placeList[index]['image']!.toString(),
+                            // image: placeList[index]['image']!.toString(),
                             title: placeList[index]['title']!.toString(),
                             titleHeroTag: titleHeroTag,
                             imageHeroTag: imageHeroTag,
-                            onShowPlaceOnMap: true,
                             data: placeList,
+                                                                    qrPlace: false,
+
                           ),
                           type: PageTransitionType.scale,
                           alignment: Alignment.center,

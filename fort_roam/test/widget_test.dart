@@ -15,7 +15,7 @@ void main() {
     List<Map<String, dynamic>> testData = [];
 
     // Build our app and trigger a frame.
-    await tester.pumpWidget(FortRoamApp(data: testData));
+    await tester.pumpWidget(FortRoamApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

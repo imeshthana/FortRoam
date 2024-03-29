@@ -1,27 +1,20 @@
-import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animarker/core/ripple_marker.dart';
-import 'package:flutter_animarker/widgets/animarker.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fort_roam/components/constants.dart';
-import 'package:fort_roam/components/navigation_bar.dart';
-import 'package:fort_roam/dbHelper/mongodb.dart';
+import 'package:fort_roam/screens/place_map_screen.dart';
 import 'package:fort_roam/screens/place_screen.dart';
 import 'package:location/location.dart';
 import 'package:page_transition/page_transition.dart';
-import '../components/app_bar2.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:custom_info_window/custom_info_window.dart';
 
 class MapScreen extends StatefulWidget {
-  MapScreen({this.title, required this.data});
+  MapScreen({required this.data});
 
-  final String? title;
   final List<Map<String, dynamic>> data;
 
   @override
@@ -29,18 +22,11 @@ class MapScreen extends StatefulWidget {
   static String id = 'map_screen';
 }
 
-class _MapScreenState extends State<MapScreen>
-    with SingleTickerProviderStateMixin {
+class _MapScreenState extends State<MapScreen> {
   String mapStyle = '';
+  String selectedCategory = 'historical';
 
-  Uint8List? markerIcon;
-  Uint8List? currentlocationmarkerAnimation;
-
-  late final AnimationController animationController;
-  late final Animation<double> markerAnimation;
-
-  CustomInfoWindowController customInfoWindowController =
-      CustomInfoWindowController();
+  CustomInfoWindowController? customInfoWindowController;
 
   final Completer<GoogleMapController> controller = Completer();
 
@@ -67,7 +53,7 @@ class _MapScreenState extends State<MapScreen>
   infoWindow(double latitude, double longitude, Map<String, dynamic> place) {
     final UniqueKey titleHeroTag = UniqueKey();
     final UniqueKey imageHeroTag = UniqueKey();
-    customInfoWindowController.addInfoWindow!(
+    customInfoWindowController?.addInfoWindow!(
       Container(
         height: 400,
         width: 200,
@@ -142,11 +128,11 @@ class _MapScreenState extends State<MapScreen>
                             context,
                             PageTransition(
                               child: PlaceScreen(
-                                image: place['image']!,
+                                // image: place['image']!,
                                 title: place['title']!,
+                                qrPlace: false,
                                 titleHeroTag: titleHeroTag,
                                 imageHeroTag: imageHeroTag,
-                                onShowPlaceOnMap: true,
                                 data: widget.data,
                               ),
                               type: PageTransitionType.bottomToTop,
@@ -174,7 +160,7 @@ class _MapScreenState extends State<MapScreen>
                         Navigator.push(
                             context,
                             PageTransition(
-                                child: MapScreen(
+                                child: PlaceMapScreen(
                                   title: place['title']!,
                                   data: widget.data,
                                 ),
@@ -209,19 +195,29 @@ class _MapScreenState extends State<MapScreen>
 
   List<Marker> markers = [];
 
-  loadData() async {
-    final Uint8List mapIcon1 =
-        await getBytesFromMapIcons('assets/mapicons/shop.png', 75);
-    final Uint8List mapIcon2 =
-        await getBytesFromMapIcons('assets/mapicons/hotel.png', 75);
-    final Uint8List mapIcon3 =
-        await getBytesFromMapIcons('assets/mapicons/restuarant.png', 75);
-    final Uint8List mapIcon4 =
-        await getBytesFromMapIcons('assets/mapicons/support.png', 75);
-    final Uint8List mapIcon5 =
-        await getBytesFromMapIcons('assets/mapicons/museum.png', 75);
-    final Uint8List mapIcon6 =
-        await getBytesFromMapIcons('assets/mapicons/activity.png', 75);
+  loadMarkers() async {
+    final Uint8List shop =
+        await getBytesFromMapIcons('assets/mapicons/shop.png', 85);
+    final Uint8List hotel =
+        await getBytesFromMapIcons('assets/mapicons/hotel.png', 85);
+    final Uint8List restuarant =
+        await getBytesFromMapIcons('assets/mapicons/restuarant.png', 85);
+    final Uint8List support =
+        await getBytesFromMapIcons('assets/mapicons/support.png', 85);
+    final Uint8List musuem =
+        await getBytesFromMapIcons('assets/mapicons/museum.png', 85);
+    final Uint8List activity =
+        await getBytesFromMapIcons('assets/mapicons/activity.png', 85);
+    final Uint8List parking =
+        await getBytesFromMapIcons('assets/mapicons/parking.png', 85);
+    final Uint8List bank =
+        await getBytesFromMapIcons('assets/mapicons/bank.png', 85);
+    final Uint8List taxi =
+        await getBytesFromMapIcons('assets/mapicons/taxi.png', 85);
+    final Uint8List school =
+        await getBytesFromMapIcons('assets/mapicons/school.png', 85);
+    final Uint8List post =
+        await getBytesFromMapIcons('assets/mapicons/post.png', 85);
 
     for (var place in widget.data) {
       List<Marker> placeMarkers = [];
@@ -237,7 +233,7 @@ class _MapScreenState extends State<MapScreen>
                 Marker(
                   markerId: MarkerId(place['title']!),
                   position: LatLng(latitude, longitude),
-                  icon: BitmapDescriptor.fromBytes(mapIcon2),
+                  icon: BitmapDescriptor.fromBytes(hotel),
                   onTap: () => infoWindow(latitude, longitude, place),
                 ),
               );
@@ -247,7 +243,7 @@ class _MapScreenState extends State<MapScreen>
                 Marker(
                   markerId: MarkerId(place['title']!),
                   position: LatLng(latitude, longitude),
-                  icon: BitmapDescriptor.fromBytes(mapIcon3),
+                  icon: BitmapDescriptor.fromBytes(restuarant),
                   onTap: () => infoWindow(latitude, longitude, place),
                 ),
               );
@@ -257,7 +253,7 @@ class _MapScreenState extends State<MapScreen>
                 Marker(
                   markerId: MarkerId(place['title']!),
                   position: LatLng(latitude, longitude),
-                  icon: BitmapDescriptor.fromBytes(mapIcon1),
+                  icon: BitmapDescriptor.fromBytes(shop),
                   onTap: () => infoWindow(latitude, longitude, place),
                 ),
               );
@@ -270,7 +266,7 @@ class _MapScreenState extends State<MapScreen>
             Marker(
               markerId: MarkerId(place['title']!),
               position: LatLng(latitude, longitude),
-              icon: BitmapDescriptor.fromBytes(mapIcon5),
+              icon: BitmapDescriptor.fromBytes(musuem),
               onTap: () => infoWindow(latitude, longitude, place),
             ),
           );
@@ -281,83 +277,83 @@ class _MapScreenState extends State<MapScreen>
             Marker(
               markerId: MarkerId(place['title']!),
               position: LatLng(latitude, longitude),
-              icon: BitmapDescriptor.fromBytes(mapIcon6),
+              icon: BitmapDescriptor.fromBytes(activity),
               onTap: () => infoWindow(latitude, longitude, place),
             ),
           );
           break;
 
+        case 'services':
+          switch (place['subtype']) {
+            case 'police':
+              placeMarkers.add(
+                Marker(
+                  markerId: MarkerId(place['title']!),
+                  position: LatLng(latitude, longitude),
+                  icon: BitmapDescriptor.fromBytes(support),
+                  onTap: () => infoWindow(latitude, longitude, place),
+                ),
+              );
+              break;
+            case 'bank':
+              placeMarkers.add(
+                Marker(
+                  markerId: MarkerId(place['title']!),
+                  position: LatLng(latitude, longitude),
+                  icon: BitmapDescriptor.fromBytes(bank),
+                  onTap: () => infoWindow(latitude, longitude, place),
+                ),
+              );
+              break;
+            case 'school':
+              placeMarkers.add(
+                Marker(
+                  markerId: MarkerId(place['title']!),
+                  position: LatLng(latitude, longitude),
+                  icon: BitmapDescriptor.fromBytes(school),
+                  onTap: () => infoWindow(latitude, longitude, place),
+                ),
+              );
+              break;
+            case 'post':
+              placeMarkers.add(
+                Marker(
+                  markerId: MarkerId(place['title']!),
+                  position: LatLng(latitude, longitude),
+                  icon: BitmapDescriptor.fromBytes(post),
+                  onTap: () => infoWindow(latitude, longitude, place),
+                ),
+              );
+              break;
+            case 'parking':
+              placeMarkers.add(
+                Marker(
+                  markerId: MarkerId(place['title']!),
+                  position: LatLng(latitude, longitude),
+                  icon: BitmapDescriptor.fromBytes(parking),
+                  onTap: () => infoWindow(latitude, longitude, place),
+                ),
+              );
+              break;
+
+            case 'taxi':
+              placeMarkers.add(
+                Marker(
+                  markerId: MarkerId(place['title']!),
+                  position: LatLng(latitude, longitude),
+                  icon: BitmapDescriptor.fromBytes(taxi),
+                  onTap: () => infoWindow(latitude, longitude, place),
+                ),
+              );
+              break;
+          }
+          break;
+
         default:
           break;
       }
-
       markers.addAll(placeMarkers);
     }
-    setState(() {});
-  }
-
-  String selectedCategory = 'historical';
-
-  List<Marker> getMarkerOfPlace() {
-    Map<String, dynamic> selectedPlace =
-        widget.data.firstWhere((place) => place['title'] == widget.title);
-
-    if (selectedPlace != null) {
-      double latitude = double.parse(selectedPlace['latitude']!);
-      double longitude = double.parse(selectedPlace['longitude']!);
-
-      return [
-        Marker(
-          markerId: MarkerId(selectedPlace['title']!),
-          position: LatLng(latitude, longitude),
-          icon: BitmapDescriptor.defaultMarker,
-          onTap: () => infoWindow(latitude, longitude, selectedPlace),
-        ),
-      ];
-    } else {
-      return [];
-    }
-  }
-
-  List<LatLng> polylineCoordinates = [];
-  // Map<PolylineId, Polyline> polylines = {};
-  Set<Polyline> polylines = {};
-  PolylinePoints polylinePoints = PolylinePoints();
-
-  getPolyPoints() async {
-    Map<String, dynamic> selectedPlace =
-        widget.data.firstWhere((place) => place['title'] == widget.title);
-
-    double latitude = double.parse(selectedPlace['latitude']!);
-    double longitude = double.parse(selectedPlace['longitude']!);
-
-    PolylinePoints polylinePoints = PolylinePoints();
-
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      "AIzaSyD2wKv_Xj01cu7xfQ5Cf0Te5sroeB5K6iE",
-      PointLatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-      PointLatLng(latitude, longitude),
-    );
-
-    if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-
-      addPolyLines();
-      // setState(() {});
-    }
-  }
-
-  addPolyLines() {
-    PolylineId id = PolylineId('route');
-    Polyline polyline = Polyline(
-        polylineId: id,
-        color: const Color.fromARGB(255, 59, 130, 254),
-        points: polylineCoordinates,
-        width: 4);
-    // polylines[id] = polyline;
-    polylines.add(polyline);
     setState(() {});
   }
 
@@ -370,6 +366,13 @@ class _MapScreenState extends State<MapScreen>
           place['subtype'] == 'bastion' ||
           place['subtype'] == 'others')
         return selectedCategory == 'historical';
+      else if (place['subtype'] == 'post' ||
+          place['subtype'] == 'police' ||
+          place['subtype'] == 'bank' ||
+          place['subtype'] == 'parking' ||
+          place['subtype'] == 'school' ||
+          place['subtype'] == 'taxi')
+        return selectedCategory == 'services';
       else
         return place['subtype'] == selectedCategory;
     }).toList();
@@ -378,11 +381,11 @@ class _MapScreenState extends State<MapScreen>
   @override
   void initState() {
     super.initState();
+    selectedCategory = 'historical';
     getCurrentLocation();
-    loadData();
-    if (widget.title != null) {
-      getPolyPoints();
-    }
+    customInfoWindowController = CustomInfoWindowController();
+    loadMarkers();
+    getFilteredMarkers();
     DefaultAssetBundle.of(context)
         .loadString('assets/maptheme/theme.json')
         .then((value) {
@@ -393,114 +396,124 @@ class _MapScreenState extends State<MapScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.title != null ? CustomAppBar() : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-      floatingActionButton: widget.title == null
-          ? Column(
+      floatingActionButton: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 50),
+            child: SpeedDial(
+              // mini: true,
+              animatedIcon: AnimatedIcons.menu_close,
+              direction: SpeedDialDirection.down,
+              backgroundColor: kColor2,
+              overlayOpacity: 0,
               children: [
-                Container(
-                  margin: EdgeInsets.only(top: 50),
-                  child: SpeedDial(
-                    // mini: true,
-                    animatedIcon: AnimatedIcons.menu_close,
-                    direction: SpeedDialDirection.down,
-                    backgroundColor: kColor2,
-                    overlayOpacity: 0,
-                    children: [
-                      SpeedDialChild(
-                        foregroundColor: kColor1,
-                        child: Icon(Icons.account_balance),
-                        // label: 'Historical',
-                        onTap: () {
-                          setState(() {
-                            selectedCategory = 'historical';
-                          });
-                        },
-                      ),
-                      SpeedDialChild(
-                        foregroundColor: kColor1,
-                        child: Icon(Icons.restaurant),
-                        // label: 'Restaurants',
-                        onTap: () {
-                          setState(() {
-                            selectedCategory = 'restaurant';
-                          });
-                        },
-                      ),
-                      SpeedDialChild(
-                        foregroundColor: kColor1,
-                        child: Icon(Icons.pedal_bike),
-                        // label: 'Activities',
-                        onTap: () {
-                          setState(() {
-                            selectedCategory = 'activity';
-                          });
-                        },
-                      ),
-                      SpeedDialChild(
-                        foregroundColor: kColor1,
-                        child: Icon(Icons.shopping_cart),
-                        // label: 'Shops',
-                        onTap: () {
-                          setState(() {
-                            selectedCategory = 'shop';
-                          });
-                        },
-                      ),
-                      SpeedDialChild(
-                        foregroundColor: kColor1,
-                        child: Icon(Icons.h_mobiledata_rounded),
-                        // label: 'Hotels',
-                        onTap: () {
-                          setState(() {
-                            selectedCategory = 'hotel';
-                          });
-                        },
-                      ),
-                    ],
+                SpeedDialChild(
+                  foregroundColor: kColor1,
+                  child: Icon(
+                    Icons.account_balance,
+                    size: MediaQuery.of(context).size.height * 0.035,
                   ),
+                  // label: 'Historical',
+                  onTap: () {
+                    setState(() {
+                      selectedCategory = 'historical';
+                    });
+                  },
                 ),
-                Spacer(),
-                Container(
-                  margin: EdgeInsets.only(bottom: 0),
-                  child: FloatingActionButton(
-                      mini: true,
-                      backgroundColor: kColor2,
-                      child: Icon(Icons.my_location),
-                      onPressed: currentLocation == null
-                          ? () {}
-                          : () async {
-                              GoogleMapController currentcontroller =
-                                  await controller.future;
-                              currentcontroller.animateCamera(
-                                  CameraUpdate.newCameraPosition(CameraPosition(
-                                      target: LatLng(currentLocation!.latitude!,
-                                          currentLocation!.longitude!),
-                                      zoom: 16)));
-                              setState(() {});
-                            }),
+                SpeedDialChild(
+                  foregroundColor: kColor1,
+                  child: Icon(
+                    Icons.restaurant,
+                    size: MediaQuery.of(context).size.height * 0.035,
+                  ),
+                  // label: 'Restaurants',
+                  onTap: () {
+                    setState(() {
+                      selectedCategory = 'restaurant';
+                    });
+                  },
+                ),
+                SpeedDialChild(
+                  foregroundColor: kColor1,
+                  child: Icon(
+                    Icons.pedal_bike,
+                    size: MediaQuery.of(context).size.height * 0.035,
+                  ),
+                  // label: 'Activities',
+                  onTap: () {
+                    setState(() {
+                      selectedCategory = 'activity';
+                    });
+                  },
+                ),
+                SpeedDialChild(
+                  foregroundColor: kColor1,
+                  child: Icon(
+                    Icons.shopping_cart,
+                    size: MediaQuery.of(context).size.height * 0.035,
+                  ),
+                  // label: 'Shops',
+                  onTap: () {
+                    setState(() {
+                      selectedCategory = 'shop';
+                    });
+                  },
+                ),
+                SpeedDialChild(
+                  foregroundColor: kColor1,
+                  child: Icon(
+                    Icons.h_mobiledata_rounded,
+                    size: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  // label: 'Hotels',
+                  onTap: () {
+                    setState(() {
+                      selectedCategory = 'hotel';
+                    });
+                  },
+                ),
+                SpeedDialChild(
+                  foregroundColor: kColor1,
+                  child: Icon(
+                    Icons.safety_check,
+                    size: MediaQuery.of(context).size.height * 0.04,
+                  ),
+                  // label: 'Hotels',
+                  onTap: () {
+                    setState(() {
+                      selectedCategory = 'services';
+                    });
+                  },
                 ),
               ],
-            )
-          : Container(
-              margin: EdgeInsets.only(bottom: 20),
-              child: FloatingActionButton(
-                  // mini: true,
-                  backgroundColor: kColor2,
-                  child: Icon(Icons.my_location),
-                  onPressed: currentLocation == null
-                      ? () {}
-                      : () async {
-                          GoogleMapController currentcontroller =
-                              await controller.future;
-                          currentcontroller.animateCamera(
-                              CameraUpdate.newCameraPosition(CameraPosition(
-                                  target: LatLng(currentLocation!.latitude!,
-                                      currentLocation!.longitude!),
-                                  zoom: 16)));
-                          setState(() {});
-                        }),
             ),
+          ),
+          Spacer(),
+          Container(
+            margin: EdgeInsets.only(bottom: 0),
+            child: FloatingActionButton(
+                mini: true,
+                backgroundColor: kColor2,
+                child: Icon(
+                  Icons.my_location,
+                  size: MediaQuery.of(context).size.height * 0.035,
+                ),
+                onPressed: currentLocation == null
+                    ? () {}
+                    : () async {
+                        GoogleMapController currentcontroller =
+                            await controller.future;
+                        currentcontroller.animateCamera(
+                            CameraUpdate.newCameraPosition(CameraPosition(
+                                target: LatLng(currentLocation!.latitude!,
+                                    currentLocation!.longitude!),
+                                zoom: 16)));
+                        setState(() {});
+                      }),
+          ),
+        ],
+      ),
       body: currentLocation == null
           ? Center(
               child: CircularProgressIndicator(
@@ -516,36 +529,21 @@ class _MapScreenState extends State<MapScreen>
                 onMapCreated: (GoogleMapController controller) {
                   controller.setMapStyle(mapStyle);
                   this.controller.complete(controller);
-                  customInfoWindowController.googleMapController = controller;
-                  getPolyPoints();
+                  customInfoWindowController!.googleMapController = controller;
+                  loadMarkers();
                 },
                 initialCameraPosition: CameraPosition(target: center, zoom: 16),
-                // polylines:
-                //   Polyline(
-                //     polylineId: PolylineId('route'),
-                //     points: polylineCoordinates,
-                //     color: Colors.red,
-                //     width: 5,
-                //   ),
-                // },
-                // polylines: widget.title != null
-                //     ? Set<Polyline>.from(getPolyPoints())
-                //     : {},
-                polylines: polylines,
-
                 // markers: Set<Marker>.from(markers),
-                markers: widget.title != null
-                    ? Set<Marker>.from(getMarkerOfPlace())
-                    : Set<Marker>.from(getFilteredMarkers()),
+                markers: Set<Marker>.from(getFilteredMarkers()),
                 onTap: (position) {
-                  customInfoWindowController.hideInfoWindow!();
+                  customInfoWindowController!.hideInfoWindow!();
                 },
                 onCameraMove: (position) {
-                  customInfoWindowController.onCameraMove!();
+                  customInfoWindowController!.onCameraMove!();
                 },
               ),
               CustomInfoWindow(
-                controller: customInfoWindowController,
+                controller: customInfoWindowController!,
                 height: 230,
                 width: 200,
                 offset: 50,

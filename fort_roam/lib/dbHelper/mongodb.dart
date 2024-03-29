@@ -14,7 +14,7 @@
 // }
 
 import 'dart:developer';
-import 'package:fort_roam/dbHelper/MongodbModel.dart';
+import 'package:fort_roam/dbHelper/mongodb_model.dart';
 import 'package:fort_roam/dbHelper/constant.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
@@ -40,9 +40,11 @@ class MongoDatabase {
   }
 
   static Future<void> addReview(
-      String placeTitle, Map<String, dynamic> review) async {
+      String placeTitle, Object review) async {
     try {
-      
+      if (db == null || !db.isConnected) {
+        await connect();
+      }
       final result = await collection.update(
         where.eq('title', placeTitle),
         modify.push('reviews', review),

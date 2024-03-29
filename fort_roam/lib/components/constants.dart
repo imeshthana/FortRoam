@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 const kColor1 = Color.fromRGBO(226, 94, 62, 1);
 const kColor2 = Color.fromARGB(255, 252, 125, 93);
 const kColor3 = Color.fromARGB(255, 253, 154, 129);
+const kColor4 = Color.fromRGBO(224, 224, 224, 1);
 
 // List<Map<String, String>> places = [
 //   {

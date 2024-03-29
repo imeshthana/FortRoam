@@ -19,7 +19,7 @@ class MongodbModel {
   String latitude;
   String longitude;
   String street;
-  List<Map<String, dynamic>> reviews;
+  List<Object> reviews;
 
   MongodbModel({
     // required this.id,
@@ -46,7 +46,7 @@ class MongodbModel {
         latitude: json["latitude"],
         longitude: json["longitude"],
         image: json["image"],
-        reviews: List<Map<String, dynamic>>.from(json["reviews"] ?? []),
+        reviews: List<Object>.from(json["reviews"] ?? []),
       );
 
   Map<String, dynamic> toJson() => {
@@ -61,14 +61,6 @@ class MongodbModel {
         "street": street,
         "reviews": reviews,
       };
-
-  // Map<String, dynamic> toReviewMap() {
-  //   return {
-  //     'name': name,
-  //     'content': content,
-  //     'rating': rating,
-  //   };
-  // }
 }
 
 class Id {
@@ -80,7 +72,7 @@ class Id {
 
   factory Id.fromJson(Map<String, dynamic> json) => Id(
         oid: json[
-            '\$oid'], // Update this line to match the MongoDB ID field name
+            '\$oid'], 
       );
 
   Map<String, dynamic> toJson() => {

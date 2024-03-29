@@ -1,9 +1,12 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/components/items_grid.dart';
 import 'package:fort_roam/components/sub_titles.dart';
+import 'package:fort_roam/screens/place_screen.dart';
+import 'package:page_transition/page_transition.dart';
 import '../components/app_bar2.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -19,7 +22,7 @@ class VoiceScreen extends StatefulWidget {
 }
 
 class _VoiceScreenState extends State<VoiceScreen> {
-  String? text;
+  late String text;
   var isListening = false;
   Color iColor = kColor1;
   Color bColor = Colors.white;
@@ -63,64 +66,121 @@ class _VoiceScreenState extends State<VoiceScreen> {
   }
 
   @override
+  void initState() {
+    text = '';
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 60.0),
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: kColor1, width: 2.0),
-          ),
-          child: AvatarGlow(
-            glowRadiusFactor: 0.7,
-            animate: true,
-            duration: Duration(milliseconds: 1000),
-            repeat: true,
-            glowColor: kColor1,
-            startDelay: Duration(milliseconds: 1000),
-            child: GestureDetector(
-              onTapDown: (details) async {
-                if (!isListening) {
-                  var available = await speech.initialize();
-                  if (available) {
-                    setState(() {
-                      isListening = true;
-                      iColor = Colors.white;
-                      bColor = kColor1;
-                      speech.listen(onResult: (result) {
-                        setState(() {
-                          text = result.recognizedWords;
-                          filterPlacesByKeywords(result.recognizedWords);
-                        });
-                      });
-                    });
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: Row(
+        children: [
+          Container(
+            margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.025,
+                left: MediaQuery.of(context).size.height * 0.025),
+            child: FloatingActionButton(
+              shape: CircleBorder(),
+              onPressed: () async {
+                try {
+                  String qrCodeScanResult =
+                      await FlutterBarcodeScanner.scanBarcode(
+                          '#ffe25e3e', 'Cancel', false, ScanMode.QR);
+                  if (!mounted) {
+                    return;
                   }
+                  setState(() {
+                    try {
+                      text = qrCodeScanResult.toString();
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                            child: PlaceScreen(
+                              title: text,
+                              data: widget.data,
+                              qrPlace: true,
+                            ),
+                            type: PageTransitionType.scale,
+                            alignment: Alignment.center,
+                            duration: Duration(milliseconds: 500),
+                          ));
+                    } catch (e) {
+                      controller.text = qrCodeScanResult.toString();
+                    }
+                  });
+                } on PlatformException {
+                  text = "Noo";
                 }
               },
-              onTapUp: (details) {
-                setState(() {
-                  isListening = false;
-                  bColor = Colors.white;
-                  iColor = kColor1;
-                });
-                speech.stop();
-              },
-              child: CircleAvatar(
-                backgroundColor: bColor,
-                radius: MediaQuery.of(context).size.height * 0.04,
-                child: Icon(
-                  Icons.mic,
-                  color: iColor,
-                  size: MediaQuery.of(context).size.height * 0.04,
+              child: Icon(Icons.qr_code,
+                  color: Colors.white,
+                  size: MediaQuery.of(context).size.height * 0.04),
+              backgroundColor: kColor1,
+              elevation: 5,
+            ),
+          ),
+          Spacer(),
+          Container(
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height * 0.025,
+              right: MediaQuery.of(context).size.height * 0.065,
+            ),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: kColor1, width: 2.0),
+            ),
+            child: AvatarGlow(
+              glowCount: 3,
+              glowRadiusFactor: 0.7,
+              animate: true,
+              duration: Duration(milliseconds: 1000),
+              repeat: true,
+              glowColor: kColor1,
+              startDelay: Duration(milliseconds: 1000),
+              child: GestureDetector(
+                onTapDown: (details) async {
+                  if (!isListening) {
+                    var available = await speech.initialize();
+                    if (available) {
+                      setState(() {
+                        isListening = true;
+                        iColor = Colors.white;
+                        bColor = kColor1;
+                        speech.listen(onResult: (result) {
+                          setState(() {
+                            text = result.recognizedWords;
+                            filterPlacesByKeywords(result.recognizedWords);
+                          });
+                        });
+                      });
+                    }
+                  }
+                },
+                onTapUp: (details) {
+                  setState(() {
+                    isListening = false;
+                    bColor = Colors.white;
+                    iColor = kColor1;
+                  });
+                  speech.stop();
+                },
+                child: CircleAvatar(
+                  backgroundColor: bColor,
+                  radius: MediaQuery.of(context).size.height * 0.035,
+                  child: Icon(
+                    Icons.mic,
+                    color: iColor,
+                    size: MediaQuery.of(context).size.height * 0.04,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -183,7 +243,7 @@ class _VoiceScreenState extends State<VoiceScreen> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.025,
             ),
-            if (filteredPlaces.isNotEmpty) ...[
+            if (filteredPlaces.isNotEmpty && text.isNotEmpty) ...[
               SizedBox(height: MediaQuery.of(context).size.height * 0.025),
               Expanded(
                 child: SingleChildScrollView(
@@ -193,7 +253,26 @@ class _VoiceScreenState extends State<VoiceScreen> {
                 height: 30,
               )
             ],
-            if (filteredPlaces.isEmpty) ...[
+            if (filteredPlaces.isEmpty && text.isNotEmpty) ...[
+              Container(
+                margin: EdgeInsets.only(
+                    top: 25,
+                    left: MediaQuery.of(context).size.height * 0.025,
+                    right: MediaQuery.of(context).size.height * 0.025),
+                child: Text(
+                  'No any search results found!',
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.height * 0.025,
+                      color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              )
+            ],
+
+            if (filteredPlaces.isEmpty && text.isEmpty) ...[
               Container(
                 margin: EdgeInsets.only(
                     top: 25,

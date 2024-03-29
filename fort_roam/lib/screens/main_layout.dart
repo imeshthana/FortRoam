@@ -4,10 +4,10 @@ import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/screens/about_us_screen.dart';
 import 'package:fort_roam/screens/favourites_screen.dart';
 import 'package:fort_roam/screens/home_screen.dart';
-import 'package:fort_roam/screens/voice_screen.dart';
+import 'package:fort_roam/screens/search_screen.dart';
 import 'package:fort_roam/screens/map_screen.dart';
-import 'package:fort_roam/screens/support_screen.dart';
-import 'package:fort_roam/screens/voice_screen.dart';
+import 'package:fort_roam/screens/services_screen.dart';
+import 'package:fort_roam/screens/search_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
 class MainLayout extends StatefulWidget {
@@ -41,6 +41,7 @@ class _MainLayoutState extends State<MainLayout> {
         child: Icon(
           FontAwesomeIcons.searchLocation,
           color: Colors.white,
+          size: MediaQuery.of(context).size.height * 0.035,
         ),
         backgroundColor: kColor1,
       ),
@@ -107,21 +108,21 @@ class _MainLayoutState extends State<MainLayout> {
                     child: Icon(
                       icon,
                       color: Colors.white,
-                      size: 25.0,
+                      size: MediaQuery.of(context).size.height * 0.035,
                     ),
                   ),
                 )
               : Icon(
                   icon,
                   color: Colors.white,
-                  size: 25.0,
+                  size: MediaQuery.of(context).size.height * 0.035,
                 ),
           if (index == currentPage)
             Text(
               label,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 12.0,
+                fontSize: MediaQuery.of(context).size.height * 0.0175,
               ),
             ),
         ],

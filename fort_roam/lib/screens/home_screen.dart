@@ -2,8 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fort_roam/components/items_list.dart';
-import 'package:fort_roam/components/gesture_card.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:fort_roam/components/sections_row.dart';
 import 'package:fort_roam/components/sub_titles.dart';
 import 'package:fort_roam/screens/activity_screen.dart';
@@ -13,8 +11,6 @@ import 'package:fort_roam/screens/history_screen.dart';
 import 'package:fort_roam/screens/map_screen.dart';
 import 'package:fort_roam/screens/place_screen.dart';
 import 'package:page_transition/page_transition.dart';
-import '../components/search_bar.dart';
-import '../components/navigation_bar.dart';
 import '../components/section_icon_button.dart';
 import '../components/slider.dart';
 import 'package:fort_roam/components/constants.dart';
@@ -41,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: Colors.transparent,
             stretch: true,
             pinned: false,
@@ -113,8 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Text(
                                   'FortRoam',
                                   style: TextStyle(
+                                    fontFamily: 'Round',
                                     color: kColor1,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w900,
                                     fontSize:
                                         MediaQuery.of(context).size.height *
                                             0.04,
@@ -252,7 +250,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   MediaQuery.of(context).size.height * 0.035,
                               child: Text(
                                 'Read More',
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize:
+                                        MediaQuery.of(context).size.height *
+                                            0.02),
                               ),
                             ),
                           ),

@@ -39,11 +39,13 @@ class SectionIconButton extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 5,
+              height: MediaQuery.of(context).size.height * 0.01,
             ),
             Text(
               section,
-              style: TextStyle(fontWeight: FontWeight.w500),
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: MediaQuery.of(context).size.height * 0.02),
             ),
           ],
         ),

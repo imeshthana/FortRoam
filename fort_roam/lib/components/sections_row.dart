@@ -3,13 +3,10 @@ import 'package:fort_roam/components/section_icon_button.dart';
 import 'package:fort_roam/screens/activity_screen.dart';
 import 'package:fort_roam/screens/commercial_screen.dart';
 import 'package:fort_roam/screens/history_screen.dart';
-import 'package:fort_roam/screens/map_screen.dart';
+import 'package:fort_roam/screens/services_screen.dart';
 
 class SectionsRow extends StatelessWidget {
-  const SectionsRow({
-    super.key,
-    required this.data
-  });
+  const SectionsRow({super.key, required this.data});
 
   final List<Map<String, dynamic>> data;
 
@@ -34,9 +31,11 @@ class SectionsRow extends StatelessWidget {
           section: 'Activity',
         ),
         SectionIconButton(
-          route: MapScreen(data: data,),
+          route: ServicesScreen(
+            data: data,
+          ),
           icon: Icons.safety_check,
-          section: 'Support',
+          section: 'Services',
         ),
       ]),
     );
