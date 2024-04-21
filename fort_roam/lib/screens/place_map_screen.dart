@@ -85,7 +85,6 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
   Set<Polyline> polylines = {};
   PolylinePoints polylinePoints = PolylinePoints();
 
-
   getPolyPoints() async {
     Map<String, dynamic> selectedPlace =
         widget.data.firstWhere((place) => place['title'] == widget.title);
@@ -96,7 +95,7 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
     PolylinePoints polylinePoints = PolylinePoints();
 
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      "AIzaSyD2wKv_Xj01cu7xfQ5Cf0Te5sroeB5K6iE",
+      "AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0",
       PointLatLng(currentLocation!.latitude!, currentLocation!.longitude!),
       PointLatLng(latitude, longitude),
     );
@@ -168,33 +167,33 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
             ))
           : Stack(children: [
               GoogleMap(
-                myLocationButtonEnabled: false,
-                myLocationEnabled: true,
-                mapToolbarEnabled: false,
-                compassEnabled: false,
-                zoomControlsEnabled: false,
-                onMapCreated: (GoogleMapController controller) {
-                  controller.setMapStyle(mapStyle);
-                  this.controller.complete(controller);
-                  getPolyPoints();
-                },
-                initialCameraPosition: CameraPosition(target: center, zoom: 16),
-                // polylines:
-                //   Polyline(
-                //     polylineId: PolylineId('route'),
-                //     points: polylineCoordinates,
-                //     color: Colors.red,
-                //     width: 5,
-                //   ),
-                // },
-                // polylines: widget.title != null
-                //     ? Set<Polyline>.from(getPolyPoints())
-                //     : {},
-                polylines: polylines,
+                  myLocationButtonEnabled: false,
+                  myLocationEnabled: true,
+                  mapToolbarEnabled: false,
+                  compassEnabled: false,
+                  zoomControlsEnabled: false,
+                  onMapCreated: (GoogleMapController controller) {
+                    controller.setMapStyle(mapStyle);
+                    this.controller.complete(controller);
+                    getPolyPoints();
+                  },
+                  initialCameraPosition:
+                      CameraPosition(target: center, zoom: 16),
+                  // polylines:
+                  //   Polyline(
+                  //     polylineId: PolylineId('route'),
+                  //     points: polylineCoordinates,
+                  //     color: Colors.red,
+                  //     width: 5,
+                  //   ),
+                  // },
+                  // polylines: widget.title != null
+                  //     ? Set<Polyline>.from(getPolyPoints())
+                  //     : {},
+                  polylines: polylines,
 
-                // markers: Set<Marker>.from(markers),
-                markers: Set<Marker>.from(markers)
-              ),
+                  // markers: Set<Marker>.from(markers),
+                  markers: Set<Marker>.from(markers)),
             ]),
     );
   }

@@ -501,6 +501,7 @@
 //   }
 // }
 
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -867,17 +868,23 @@ class _PlaceScreenState extends State<PlaceScreen> {
                               height: MediaQuery.of(context).size.height * 0.02,
                             ),
                             Container(
-                              child: Text(
-                                'Galle Fort is a historic fortified city located in the southwestern part of Sri Lanka, in the city of Galle. Originally built by the Portuguese in the 16th century and later extensively fortified by the Dutch in the 17th century, Galle Fort stands as a UNESCO World Heritage Site and is a prominent example of well-preserved colonial architecture.',
-                                // textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.height * 0.02,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
+                              child: selectedPlace['description'] == ''
+                                  ? Text(
+                                      'Galle Fort is a historic fortified city located in the southwestern part of Sri Lanka, in the city of Galle. Originally built by the Portuguese in the 16th century and later extensively fortified by the Dutch in the 17th century, Galle Fort stands as a UNESCO World Heritage Site and is a prominent example of well-preserved colonial architecture.',
+                                      style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.height * 0.02,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                  : Text(
+                                      selectedPlace['description'],
+                                      style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.height * 0.02,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                      ),
+                                    ),),
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.04,
                             ),

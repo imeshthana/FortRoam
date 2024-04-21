@@ -94,7 +94,10 @@ class _VoiceScreenState extends State<VoiceScreen> {
                     return;
                   }
                   setState(() {
-                    try {
+                    if (qrCodeScanResult == '-1') {
+                      text = "No any QR code found";
+                    } else{
+                      try {
                       text = qrCodeScanResult.toString();
                       Navigator.push(
                           context,
@@ -108,12 +111,13 @@ class _VoiceScreenState extends State<VoiceScreen> {
                             alignment: Alignment.center,
                             duration: Duration(milliseconds: 500),
                           ));
-                    } catch (e) {
-                      controller.text = qrCodeScanResult.toString();
+                      } catch (e) {
+                        controller.text = qrCodeScanResult.toString();
+                      }
                     }
                   });
                 } on PlatformException {
-                  text = "Noo";
+                  text = "No any QR code found";
                 }
               },
               child: Icon(Icons.qr_code,

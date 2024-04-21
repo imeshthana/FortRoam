@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:custom_info_window/custom_info_window.dart';
+import 'package:uuid/uuid.dart';
 
 class MapScreen extends StatefulWidget {
   MapScreen({required this.data});
@@ -53,6 +54,7 @@ class _MapScreenState extends State<MapScreen> {
   infoWindow(double latitude, double longitude, Map<String, dynamic> place) {
     final UniqueKey titleHeroTag = UniqueKey();
     final UniqueKey imageHeroTag = UniqueKey();
+
     customInfoWindowController?.addInfoWindow!(
       Container(
         height: 400,
@@ -92,6 +94,7 @@ class _MapScreenState extends State<MapScreen> {
                   tag: titleHeroTag,
                   child: Text(
                     place['title']!,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -196,6 +199,8 @@ class _MapScreenState extends State<MapScreen> {
   List<Marker> markers = [];
 
   loadMarkers() async {
+    var uuid = Uuid();
+
     final Uint8List shop =
         await getBytesFromMapIcons('assets/mapicons/shop.png', 85);
     final Uint8List hotel =
@@ -231,7 +236,7 @@ class _MapScreenState extends State<MapScreen> {
             case 'hotel':
               placeMarkers.add(
                 Marker(
-                  markerId: MarkerId(place['title']!),
+                  markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
                   position: LatLng(latitude, longitude),
                   icon: BitmapDescriptor.fromBytes(hotel),
                   onTap: () => infoWindow(latitude, longitude, place),
@@ -241,7 +246,7 @@ class _MapScreenState extends State<MapScreen> {
             case 'restaurant':
               placeMarkers.add(
                 Marker(
-                  markerId: MarkerId(place['title']!),
+                  markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
                   position: LatLng(latitude, longitude),
                   icon: BitmapDescriptor.fromBytes(restuarant),
                   onTap: () => infoWindow(latitude, longitude, place),
@@ -251,7 +256,7 @@ class _MapScreenState extends State<MapScreen> {
             case 'shop':
               placeMarkers.add(
                 Marker(
-                  markerId: MarkerId(place['title']!),
+                  markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
                   position: LatLng(latitude, longitude),
                   icon: BitmapDescriptor.fromBytes(shop),
                   onTap: () => infoWindow(latitude, longitude, place),
@@ -264,7 +269,7 @@ class _MapScreenState extends State<MapScreen> {
         case 'historical':
           placeMarkers.add(
             Marker(
-              markerId: MarkerId(place['title']!),
+              markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
               position: LatLng(latitude, longitude),
               icon: BitmapDescriptor.fromBytes(musuem),
               onTap: () => infoWindow(latitude, longitude, place),
@@ -275,7 +280,7 @@ class _MapScreenState extends State<MapScreen> {
         case 'activities':
           placeMarkers.add(
             Marker(
-              markerId: MarkerId(place['title']!),
+              markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
               position: LatLng(latitude, longitude),
               icon: BitmapDescriptor.fromBytes(activity),
               onTap: () => infoWindow(latitude, longitude, place),
@@ -288,7 +293,7 @@ class _MapScreenState extends State<MapScreen> {
             case 'police':
               placeMarkers.add(
                 Marker(
-                  markerId: MarkerId(place['title']!),
+                  markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
                   position: LatLng(latitude, longitude),
                   icon: BitmapDescriptor.fromBytes(support),
                   onTap: () => infoWindow(latitude, longitude, place),
@@ -298,7 +303,7 @@ class _MapScreenState extends State<MapScreen> {
             case 'bank':
               placeMarkers.add(
                 Marker(
-                  markerId: MarkerId(place['title']!),
+                  markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
                   position: LatLng(latitude, longitude),
                   icon: BitmapDescriptor.fromBytes(bank),
                   onTap: () => infoWindow(latitude, longitude, place),
@@ -308,7 +313,7 @@ class _MapScreenState extends State<MapScreen> {
             case 'school':
               placeMarkers.add(
                 Marker(
-                  markerId: MarkerId(place['title']!),
+                  markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
                   position: LatLng(latitude, longitude),
                   icon: BitmapDescriptor.fromBytes(school),
                   onTap: () => infoWindow(latitude, longitude, place),
@@ -318,7 +323,7 @@ class _MapScreenState extends State<MapScreen> {
             case 'post':
               placeMarkers.add(
                 Marker(
-                  markerId: MarkerId(place['title']!),
+                  markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
                   position: LatLng(latitude, longitude),
                   icon: BitmapDescriptor.fromBytes(post),
                   onTap: () => infoWindow(latitude, longitude, place),
@@ -328,7 +333,7 @@ class _MapScreenState extends State<MapScreen> {
             case 'parking':
               placeMarkers.add(
                 Marker(
-                  markerId: MarkerId(place['title']!),
+                  markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
                   position: LatLng(latitude, longitude),
                   icon: BitmapDescriptor.fromBytes(parking),
                   onTap: () => infoWindow(latitude, longitude, place),
@@ -339,7 +344,7 @@ class _MapScreenState extends State<MapScreen> {
             case 'taxi':
               placeMarkers.add(
                 Marker(
-                  markerId: MarkerId(place['title']!),
+                  markerId: MarkerId("${place['title']}_${place['latitude']}_${place['longitude']}"),
                   position: LatLng(latitude, longitude),
                   icon: BitmapDescriptor.fromBytes(taxi),
                   onTap: () => infoWindow(latitude, longitude, place),
@@ -348,7 +353,6 @@ class _MapScreenState extends State<MapScreen> {
               break;
           }
           break;
-
         default:
           break;
       }
@@ -360,13 +364,13 @@ class _MapScreenState extends State<MapScreen> {
   List<Marker> getFilteredMarkers() {
     return markers.where((marker) {
       Map<String, dynamic> place = widget.data.firstWhere(
-        (place) => marker.markerId.value == place['title'],
+        (place) => marker.markerId.value == "${place['title']}_${place['latitude']}_${place['longitude']}",
       );
       if (place['subtype'] == 'museum' ||
           place['subtype'] == 'bastion' ||
-          place['subtype'] == 'others')
+          place['subtype'] == 'others') {
         return selectedCategory == 'historical';
-      else if (place['subtype'] == 'post' ||
+      } else if (place['subtype'] == 'post' ||
           place['subtype'] == 'police' ||
           place['subtype'] == 'bank' ||
           place['subtype'] == 'parking' ||
