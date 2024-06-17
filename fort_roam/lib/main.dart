@@ -20,10 +20,6 @@ void main() async {
   await Hive.initFlutter();
   var box = await Hive.openBox('favBox');
 
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await MongoDatabase.connect();
-  // List<Map<String, dynamic>> data = await MongoDatabase.getData();
-
   runApp(FortRoamApp());
 }
 

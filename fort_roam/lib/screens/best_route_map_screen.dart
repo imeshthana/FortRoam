@@ -216,7 +216,7 @@ class _BestRouteMapScreenState extends State<BestRouteMapScreen> {
                   height: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: Image.asset(place['image'].toString()).image,
+                      image: NetworkImage(place['imageURL']!.toString()),
                       fit: BoxFit.fill,
                     ),
                     borderRadius: BorderRadius.only(
@@ -378,29 +378,29 @@ class _BestRouteMapScreenState extends State<BestRouteMapScreen> {
             ))
           : Stack(children: [
               GoogleMap(
-                  myLocationButtonEnabled: false,
-                  myLocationEnabled: true,
-                  mapToolbarEnabled: false,
-                  compassEnabled: false,
-                  zoomControlsEnabled: false,
-                  onMapCreated: (GoogleMapController controller) {
-                    controller.setMapStyle(mapStyle);
-                    this.controller.complete(controller);
-                    numberOfPlaces = places.length;
-                    customInfoWindowController!.googleMapController = controller;
-                    getPlaceOrder();
-                    getPolyPoints();
-                  },
-                  initialCameraPosition:
-                      CameraPosition(target: center, zoom: 16),
-                  polylines: polylines,
-                  markers: Set<Marker>.from(markers),
-                  onTap: (position) {
+                myLocationButtonEnabled: false,
+                myLocationEnabled: true,
+                mapToolbarEnabled: false,
+                compassEnabled: false,
+                zoomControlsEnabled: false,
+                onMapCreated: (GoogleMapController controller) {
+                  controller.setMapStyle(mapStyle);
+                  this.controller.complete(controller);
+                  numberOfPlaces = places.length;
+                  customInfoWindowController!.googleMapController = controller;
+                  getPlaceOrder();
+                  getPolyPoints();
+                },
+                initialCameraPosition: CameraPosition(target: center, zoom: 16),
+                polylines: polylines,
+                markers: Set<Marker>.from(markers),
+                onTap: (position) {
                   customInfoWindowController!.hideInfoWindow!();
                 },
                 onCameraMove: (position) {
                   customInfoWindowController!.onCameraMove!();
-                },),
+                },
+              ),
               CustomInfoWindow(
                 controller: customInfoWindowController!,
                 height: 230,

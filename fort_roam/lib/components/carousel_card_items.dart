@@ -57,8 +57,7 @@ class CarouselCardItems extends StatelessWidget {
                             titleHeroTag: titleHeroTag,
                             imageHeroTag: imageHeroTag,
                             data: placeList,
-                                                                    qrPlace: false,
-
+                            qrPlace: false,
                           ),
                           type: PageTransitionType.scale,
                           alignment: Alignment.center,
@@ -80,10 +79,15 @@ class CarouselCardItems extends StatelessWidget {
                             borderRadius: BorderRadius.circular(15.0),
                             child: Hero(
                               tag: imageHeroTag,
-                              child: Image.asset(
-                                placeList[index]['image']!.toString(),
-                                fit: BoxFit.cover,
+                              child: Container(
                                 width: double.infinity,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        placeList[index]['imageURL']!.toString()),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
                               ),
                             ),
                           ),

@@ -169,7 +169,7 @@ class _CustomRouteMapScreenState extends State<CustomRouteMapScreen> {
                   height: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: Image.asset(place['image'].toString()).image,
+                      image: NetworkImage(place['imageURL']!.toString()),
                       fit: BoxFit.fill,
                     ),
                     borderRadius: BorderRadius.only(

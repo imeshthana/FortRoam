@@ -54,12 +54,18 @@ class ItemsList2 extends StatelessWidget {
                             borderRadius: BorderRadius.circular(15.0),
                             child: Hero(
                               tag: imageHeroTag,
-                              child: Image.asset(
-                                data[index]['image']!,
-                                fit: BoxFit.cover,
+                              child: Container(
                                 height:
                                     MediaQuery.of(context).size.height * 0.2,
                                 width: double.infinity,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                      data[index]['imageURL']!,
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
