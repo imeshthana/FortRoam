@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -124,6 +123,12 @@ class _PlaceScreenState extends State<PlaceScreen> {
         slivers: [
           SliverAppBar(
             backgroundColor: Colors.transparent,
+            leading: Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.white,
+              size: MediaQuery.of(context).size.height * 0.04,
+            ),
+            automaticallyImplyLeading: false,
             stretch: true,
             pinned: false,
             elevation: 0,
@@ -141,11 +146,18 @@ class _PlaceScreenState extends State<PlaceScreen> {
                       width: double.infinity,
                       height: MediaQuery.of(context).size.height * 0.5,
                       child: widget.qrPlace == true
-                        //   ? Image.asset(
-                        //   selectedPlace['image']!,
-                        //   fit: BoxFit.cover,
-                        // )
-                        ? Container(
+                          ? Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image:
+                                      NetworkImage(selectedPlace['imageURL']!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          : Hero(
+                              tag: widget.imageHeroTag.toString(),
+                              child: Container(
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: NetworkImage(
@@ -153,20 +165,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                              )
-                          : 
-                      Hero(
-                        tag: widget.imageHeroTag.toString(),
-                        child: Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                        selectedPlace['imageURL']!),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              )
-                      ),
+                              )),
                     ),
                     Container(
                       margin: EdgeInsets.only(top: 0.0),
@@ -196,9 +195,9 @@ class _PlaceScreenState extends State<PlaceScreen> {
             automaticallyImplyLeading: false,
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(
-                MediaQuery.of(context).size.height * 0.075,
+                MediaQuery.of(context).size.height * 0.085,
               ),
-              child: SizedBox(),
+              child: SizedBox(height: 10),
             ),
             flexibleSpace: FlexibleSpaceBar(
               background: Column(children: [
@@ -208,10 +207,9 @@ class _PlaceScreenState extends State<PlaceScreen> {
                 Center(
                     child: widget.qrPlace == true
                         ? Titles(title: widget.title)
-                        : 
-                    Hero(
-                        tag: widget.titleHeroTag.toString(),
-                        child: Titles(title: widget.title))),
+                        : Hero(
+                            tag: widget.titleHeroTag.toString(),
+                            child: Titles(title: widget.title))),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.025,
                 ),
@@ -383,7 +381,9 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                   ? Text(
                                       'Galle Fort is a historic fortified city located in the southwestern part of Sri Lanka, in the city of Galle. Originally built by the Portuguese in the 16th century and later extensively fortified by the Dutch in the 17th century, Galle Fort stands as a UNESCO World Heritage Site and is a prominent example of well-preserved colonial architecture.',
                                       style: TextStyle(
-                                        fontSize: MediaQuery.of(context).size.height * 0.02,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.02,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black,
                                       ),
@@ -391,11 +391,14 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                   : Text(
                                       selectedPlace['description'],
                                       style: TextStyle(
-                                        fontSize: MediaQuery.of(context).size.height * 0.02,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.02,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black,
                                       ),
-                                    ),),
+                                    ),
+                            ),
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.04,
                             ),
@@ -542,6 +545,3 @@ class _PlaceScreenState extends State<PlaceScreen> {
     );
   }
 }
-
-
-

@@ -47,6 +47,7 @@ class ItemsList extends StatelessWidget {
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.4,
                   child: Card(
+                    color: Colors.transparent,
                     elevation: 0,
                     margin: EdgeInsets.only(left: 0, right: 20),
                     shape: RoundedRectangleBorder(
@@ -66,6 +67,7 @@ class ItemsList extends StatelessWidget {
                                     MediaQuery.of(context).size.height * 0.2,
                                 width: double.infinity,
                                 decoration: BoxDecoration(
+                                  color: Colors.transparent,
                                   image: DecorationImage(
                                     image: NetworkImage(
                                       cardItems[index]['imageURL']!,
