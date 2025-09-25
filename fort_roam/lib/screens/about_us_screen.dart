@@ -25,17 +25,6 @@ class AboutUsScreen extends StatelessWidget {
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.035),
                 SubTitles(subTitle: 'About Us'),
-                Container(
-                  width: MediaQuery.of(context).size.height * 0.45,
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  child: Center(
-                    child: Image.asset(
-                      'images/galle_heritage_logo.jpg',
-                      height: double.infinity,
-                      width: double.infinity,
-                    ),
-                  ),
-                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.025),
                 Center(
                   child: Column(
@@ -135,19 +124,13 @@ class AboutUsScreen extends StatelessWidget {
                         ContactDetailTile(
                           icon: Icons.email,
                           label: 'Email',
-                          value: 'galleheritagefoundation@gmail.com',
+                          value: 'fortroam@gmail.com',
                         ),
                         SizedBox(height: 10),
                         ContactDetailTile(
                           icon: Icons.phone,
                           label: 'Phone Number',
                           value: '091 2246784 / 091 3096266',
-                        ),
-                        SizedBox(height: 10),
-                        ContactDetailTile(
-                          icon: Icons.location_on,
-                          label: 'Address',
-                          value: 'No 12, Rampart Street, Fort, Galle',
                         ),
                       ],
                     ),

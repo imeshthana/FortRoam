@@ -42,21 +42,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       });
     }
   }
-
+  
   Future<void> fetchData() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    try {
-      final response = await http.get(Uri.parse('https://fortroamweb-server.onrender.com/place'));
-      if (response.statusCode == 200) {
-        final List<dynamic> responseData = json.decode(response.body);
-        setState(() {
-          data = responseData.map((item) => item as Map<String, dynamic>).toList();
-        });
-      } else {
-        throw Exception('Failed to load data');
-      }
-    } catch (e) {
-      print('Error fetching data: $e');
+    final response = await http
+        .get(Uri.parse('https://fortroamweb-server.onrender.com/place'));
+
+    if (response.statusCode == 200) {
+      final places = json.decode(response.body);
+
+      setState(() {
+        data = places;
+      });
+    } else {
+      throw Exception('Failed to load places');
     }
   }
 
