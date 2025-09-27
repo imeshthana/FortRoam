@@ -92,6 +92,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                         child: Text(
                           'Best Route',
                           style: TextStyle(
+                              color: Colors.white,
                               fontSize:
                                   MediaQuery.of(context).size.height * 0.02),
                         ),
@@ -124,6 +125,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                         child: Text(
                           'Custom Route',
                           style: TextStyle(
+                              color: Colors.white,
                               fontSize:
                                   MediaQuery.of(context).size.height * 0.02),
                         ),
@@ -273,7 +275,8 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                                                       decoration: BoxDecoration(
                                                         image: DecorationImage(
                                                           image: NetworkImage(
-                                                              place['imageURL']!,),
+                                                            place['imageURL']!,
+                                                          ),
                                                           fit: BoxFit.fitHeight,
                                                         ),
                                                       ),

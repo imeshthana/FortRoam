@@ -29,6 +29,9 @@ class _MainLayoutState extends State<MainLayout> {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50.0),
+        ),
         onPressed: () {
           Navigator.push(
               context,
@@ -70,7 +73,7 @@ class _MainLayoutState extends State<MainLayout> {
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        height: 60,
+        height: MediaQuery.of(context).size.height * 0.08,
         shape: CircularNotchedRectangle(),
         color: kColor1,
         child: Row(
@@ -117,14 +120,14 @@ class _MainLayoutState extends State<MainLayout> {
                   color: Colors.white,
                   size: MediaQuery.of(context).size.height * 0.035,
                 ),
-          if (index == currentPage)
-            Text(
-              label,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: MediaQuery.of(context).size.height * 0.0175,
-              ),
-            ),
+          // if (index == currentPage)
+          //   Text(
+          //     label,
+          //     style: TextStyle(
+          //       color: Colors.white,
+          //       fontSize: MediaQuery.of(context).size.height * 0.0175,
+          //     ),
+          //   ),
         ],
       ),
     );

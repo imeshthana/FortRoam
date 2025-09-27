@@ -43,20 +43,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
   
-  Future<void> fetchData() async {
-    final response = await http
-        .get(Uri.parse('https://fortroamweb-server.onrender.com/place'));
+Future<void> fetchData() async {
+    final response = await http.get(
+      Uri.parse('https://fortroam-server.onrender.com/place'),
+    );
 
     if (response.statusCode == 200) {
-      final places = json.decode(response.body);
+      final List<dynamic> places = json.decode(response.body);
 
       setState(() {
-        data = places;
+        data = places.map((e) => e as Map<String, dynamic>).toList();
       });
+
+      print(data);
     } else {
       throw Exception('Failed to load places');
     }
   }
+
 
   // Future<void> checkDatabaseConnection() async {
   //   WidgetsFlutterBinding.ensureInitialized();
