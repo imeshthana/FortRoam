@@ -70,7 +70,7 @@ class ItemsList extends StatelessWidget {
                                   color: Colors.transparent,
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                      cardItems[index]['imageURL']!,
+                                      cardItems[index]['image']!,
                                     ),
                                     fit: BoxFit.cover,
                                   ),
@@ -86,6 +86,8 @@ class ItemsList extends StatelessWidget {
                             tag: titleHeroTag,
                             child: Text(
                               cardItems[index]['title']!,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,

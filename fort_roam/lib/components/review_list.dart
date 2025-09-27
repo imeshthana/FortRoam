@@ -113,7 +113,11 @@ class _ReviewListState extends State<ReviewList> {
                                         color: kColor1,
                                       ),
                                   itemSize: 20,
-                                  rating: widget.data[index]['rating']),
+                                  rating: widget.data[index]['rating'] is String
+                                    ? double.parse(widget.data[index]['rating'])
+                                    : (widget.data[index]['rating'] as num)
+                                        .toDouble(),
+                              ),
                               SizedBox(height: 8.0),
                               Text(widget.data[index]['content']),
                             ],

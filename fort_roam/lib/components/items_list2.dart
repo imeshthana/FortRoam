@@ -41,6 +41,7 @@ class ItemsList2 extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.35,
                   child: Card(
                     elevation: 0,
+                    color: Colors.transparent,
                     margin: EdgeInsets.only(left: 0, right: 20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -61,7 +62,7 @@ class ItemsList2 extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                      data[index]['imageURL']!,
+                                      data[index]['image']!,
                                     ),
                                     fit: BoxFit.cover,
                                   ),
@@ -78,6 +79,8 @@ class ItemsList2 extends StatelessWidget {
                             child: Text(
                               data[index]['title']!,
                               textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize:

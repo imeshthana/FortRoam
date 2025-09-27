@@ -9,6 +9,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class WelcomeScreen extends StatefulWidget {
   WelcomeScreen({super.key});
 
@@ -26,12 +28,53 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   late List<Map<String, dynamic>> data = [];
   bool isLoading = false;
   bool hasInternet = true;
+  bool isFirstTime = true;
 
   @override
   void initState() {
     super.initState();
     checkInternetConnection();
+    checkFirstTime();
     showProgress = false;
+  }
+
+  Future<void> checkFirstTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    final firstTime = prefs.getBool('isFirstTime') ?? true;
+
+    setState(() {
+      isFirstTime = firstTime;
+    });
+
+    if (!firstTime) {
+      autoNavigate();
+    }
+  }
+
+  Future<void> autoNavigate() async {
+    setState(() => showProgress = true);
+
+    if (hasInternet) {
+      await fetchData();
+      if (data.isNotEmpty) {
+        navigateToNextScreen();
+      } else {
+        navigateToWelcomeScreen2();
+      }
+    } else {
+      Future.delayed(const Duration(seconds: 5), () {
+        navigateToWelcomeScreen2();
+      });
+    }
+  }
+
+  void onGetStartedPressed() async {
+    setState(() => showProgress = true);
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isFirstTime', false);
+
+    autoNavigate();
   }
 
   Future<void> checkInternetConnection() async {
@@ -42,8 +85,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       });
     }
   }
-  
-Future<void> fetchData() async {
+
+  Future<void> fetchData() async {
     final response = await http.get(
       Uri.parse('https://fortroam-server.onrender.com/place'),
     );
@@ -60,13 +103,6 @@ Future<void> fetchData() async {
       throw Exception('Failed to load places');
     }
   }
-
-
-  // Future<void> checkDatabaseConnection() async {
-  //   WidgetsFlutterBinding.ensureInitialized();
-  //   await MongoDatabase.connect();
-  //   data = await MongoDatabase.getData();
-  // }
 
   void navigateToNextScreen() {
     Navigator.pushReplacement(
@@ -170,26 +206,7 @@ Future<void> fetchData() async {
                   color: kColor1,
                   borderRadius: BorderRadius.circular(30.0),
                   child: MaterialButton(
-                    onPressed: () async {
-                      setState(() {
-                        showProgress = true;
-                      });
-                      if (hasInternet) {
-                        await fetchData();
-                        if (data.isNotEmpty) {
-                          navigateToNextScreen();
-                        } else {
-                          navigateToWelcomeScreen2();
-                        }
-                      } else {
-                        Future.delayed(
-                          Duration(seconds: 5),
-                          () {
-                            navigateToWelcomeScreen2();
-                          },
-                        );
-                      }
-                    },
+                    onPressed: onGetStartedPressed,
                     minWidth: MediaQuery.of(context).size.width * 0.65,
                     height: MediaQuery.of(context).size.height * 0.07,
                     child: Text(

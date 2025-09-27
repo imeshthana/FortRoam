@@ -24,6 +24,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ],
       automaticallyImplyLeading: false,
+      surfaceTintColor: Colors.white,
       leading: null,
       title: Row(
         children: [
@@ -37,24 +38,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           SizedBox(
             width: 10,
           ),
-          Hero(
-            tag: 'title',
-            child: Text(
-              'FortRoam',
-              style: TextStyle(
-                fontFamily: 'Round',
-                color: Color.fromRGBO(255, 115, 0, 1),
-                fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.of(context).size.height * 0.035,
-                shadows: [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 154, 147, 147),
-                    offset: Offset(2.0, 2.0),
-                    blurRadius: 3.0,
-                    spreadRadius: 1.0,
-                  ),
-                ],
-              ),
+          Text(
+            'FortRoam',
+            style: TextStyle(
+              fontFamily: 'Round',
+              color: Color.fromRGBO(255, 115, 0, 1),
+              fontWeight: FontWeight.bold,
+              fontSize: MediaQuery.of(context).size.height * 0.035,
+              shadows: [
+                BoxShadow(
+                  color: const Color.fromARGB(255, 154, 147, 147),
+                  offset: Offset(2.0, 2.0),
+                  blurRadius: 3.0,
+                  spreadRadius: 1.0,
+                ),
+              ],
             ),
           ),
         ],

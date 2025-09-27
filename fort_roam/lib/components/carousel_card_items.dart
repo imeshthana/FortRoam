@@ -84,7 +84,7 @@ class CarouselCardItems extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                        placeList[index]['imageURL']!.toString()),
+                                        placeList[index]['image']!.toString()),
                                     fit: BoxFit.fill,
                                   ),
                                 ),
@@ -100,6 +100,8 @@ class CarouselCardItems extends StatelessWidget {
                           tag: titleHeroTag,
                           child: Text(
                             placeList[index]['title']!.toString(),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,

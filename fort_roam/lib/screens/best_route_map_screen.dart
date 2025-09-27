@@ -216,7 +216,7 @@ class _BestRouteMapScreenState extends State<BestRouteMapScreen> {
                   height: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(place['imageURL']!.toString()),
+                      image: NetworkImage(place['image']!.toString()),
                       fit: BoxFit.fill,
                     ),
                     borderRadius: BorderRadius.only(
@@ -234,6 +234,8 @@ class _BestRouteMapScreenState extends State<BestRouteMapScreen> {
                   tag: titleHeroTag,
                   child: Text(
                     place['title']!,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15,
@@ -357,6 +359,7 @@ class _BestRouteMapScreenState extends State<BestRouteMapScreen> {
         child: FloatingActionButton(
             // mini: true,
             backgroundColor: kColor2,
+            foregroundColor: Colors.white,
             child: Icon(Icons.my_location),
             onPressed: currentLocation == null
                 ? () {}

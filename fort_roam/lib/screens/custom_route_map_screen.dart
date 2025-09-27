@@ -169,7 +169,7 @@ class _CustomRouteMapScreenState extends State<CustomRouteMapScreen> {
                   height: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(place['imageURL']!.toString()),
+                      image: NetworkImage(place['image']!.toString()),
                       fit: BoxFit.fill,
                     ),
                     borderRadius: BorderRadius.only(
@@ -187,6 +187,8 @@ class _CustomRouteMapScreenState extends State<CustomRouteMapScreen> {
                   tag: titleHeroTag,
                   child: Text(
                     place['title']!,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15,
@@ -305,6 +307,7 @@ class _CustomRouteMapScreenState extends State<CustomRouteMapScreen> {
         child: FloatingActionButton(
             // mini: true,
             backgroundColor: kColor2,
+            foregroundColor: Colors.white,
             child: Icon(Icons.my_location),
             onPressed: currentLocation == null
                 ? () {}

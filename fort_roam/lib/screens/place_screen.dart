@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fort_roam/components/app_bar2.dart';
 import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/components/review_list.dart';
@@ -40,6 +41,7 @@ class PlaceScreen extends StatefulWidget {
 
 class _PlaceScreenState extends State<PlaceScreen> {
   late Map<String, dynamic> selectedPlace;
+  final FlutterTts flutterTts = FlutterTts();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController reviewController = TextEditingController();
   late double rating;
@@ -95,6 +97,29 @@ class _PlaceScreenState extends State<PlaceScreen> {
     super.initState();
     getPlace();
     isFavorite = db.getFavoritePlaces().contains(widget.title);
+    flutterTts.setLanguage("en-US");
+    flutterTts.setPitch(1.0);
+    flutterTts.setSpeechRate(0.5);
+  }
+
+  Future<void> speakDescription() async {
+    String title = selectedPlace['title'];
+    print(title);
+    String description = selectedPlace['description'];
+    if (description.isEmpty) {
+      description =
+          "We have no description available for $title at the moment.";
+      await flutterTts.speak(description);
+      return;
+    }
+    await flutterTts
+        .speak("Here is some information about $title. $description");
+  }
+
+  @override
+  void dispose() {
+    flutterTts.stop();
+    super.dispose();
   }
 
   @override
@@ -103,7 +128,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
       floatingActionButton: Container(
         margin: EdgeInsets.only(bottom: 15, right: 5),
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: speakDescription,
           child: Icon(
             Icons.volume_up,
             color: Colors.white,
@@ -123,10 +148,15 @@ class _PlaceScreenState extends State<PlaceScreen> {
         slivers: [
           SliverAppBar(
             backgroundColor: Colors.transparent,
-            leading: Icon(
-              Icons.arrow_back_ios_new,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                size: MediaQuery.of(context).size.height * 0.03,
+              ),
               color: Colors.white,
-              size: MediaQuery.of(context).size.height * 0.04,
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
             automaticallyImplyLeading: false,
             stretch: true,
@@ -149,8 +179,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                           ? Container(
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                  image:
-                                      NetworkImage(selectedPlace['imageURL']!),
+                                  image: NetworkImage(selectedPlace['image']!),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -160,8 +189,8 @@ class _PlaceScreenState extends State<PlaceScreen> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: NetworkImage(
-                                        selectedPlace['imageURL']!),
+                                    image:
+                                        NetworkImage(selectedPlace['image']!),
                                     fit: BoxFit.cover,
                                   ),
                                 ),

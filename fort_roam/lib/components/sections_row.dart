@@ -18,7 +18,7 @@ class SectionsRow extends StatelessWidget {
         SectionIconButton(
           route: HistoryScreen(data: data),
           icon: Icons.account_balance,
-          section: 'Historical',
+          section: 'History',
         ),
         SectionIconButton(
           route: CommercialScreen(data: data),

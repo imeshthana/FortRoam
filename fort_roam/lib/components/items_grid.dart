@@ -73,16 +73,17 @@ class _ItemsGridState extends State<ItemsGrid> {
                         borderRadius: BorderRadius.circular(15.0),
                         child: Hero(
                           tag: imageHeroTag,
-                           child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                        place['imageURL']!,),
-                                    fit: BoxFit.cover,
-                                  ),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  place['image']!,
                                 ),
+                                fit: BoxFit.cover,
                               ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -95,6 +96,8 @@ class _ItemsGridState extends State<ItemsGrid> {
                       child: Text(
                         place['title']!,
                         textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),

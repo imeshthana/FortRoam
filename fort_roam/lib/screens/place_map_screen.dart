@@ -146,6 +146,7 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
         child: FloatingActionButton(
             // mini: true,
             backgroundColor: kColor2,
+            foregroundColor: Colors.white,
             child: Icon(Icons.my_location),
             onPressed: currentLocation == null
                 ? () {}

@@ -76,7 +76,7 @@ class _MapScreenState extends State<MapScreen> {
                   height: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(place['imageURL']!.toString()),
+                      image: NetworkImage(place['image']!.toString()),
                       fit: BoxFit.fill,
                     ),
                     borderRadius: BorderRadius.only(
@@ -94,6 +94,8 @@ class _MapScreenState extends State<MapScreen> {
                   tag: titleHeroTag,
                   child: Text(
                     place['title']!,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15,

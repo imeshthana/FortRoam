@@ -275,7 +275,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                                                       decoration: BoxDecoration(
                                                         image: DecorationImage(
                                                           image: NetworkImage(
-                                                            place['imageURL']!,
+                                                            place['image']!,
                                                           ),
                                                           fit: BoxFit.fitHeight,
                                                         ),
@@ -292,6 +292,9 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                                                   tag: titleHeroTag,
                                                   child: Text(
                                                     place['title']!,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontSize:
