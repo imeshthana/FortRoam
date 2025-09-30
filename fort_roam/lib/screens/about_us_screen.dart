@@ -3,6 +3,7 @@ import 'package:fort_roam/components/app_bar1.dart';
 import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/components/items_grid.dart';
 import 'package:fort_roam/components/sub_titles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutUsScreen extends StatelessWidget {
   AboutUsScreen({super.key});
@@ -57,7 +58,7 @@ class AboutUsScreen extends StatelessWidget {
                                 ),
                                 Center(
                                   child: Text(
-                                    'To create a smart, user-friendly mobile platform that enriches the cultural and historical experience of Galle Fort, making it a globally recognized, accessible, and immersive heritage destination for every visitor.',
+                                    '"To create a smart, user-friendly mobile platform that enriches the cultural and historical journey of Galle Fort, making it a globally recognized, accessible, and immersive heritage site."',
                                     style: TextStyle(
                                         fontSize:
                                             MediaQuery.of(context).size.height *
@@ -103,12 +104,75 @@ class AboutUsScreen extends StatelessWidget {
                                 ),
                                 Center(
                                   child: Text(
-                                    'To build a mobile application that makes it easier and more enjoyable for tourists and visitors to explore Galle Fort. The app provides simple navigation, useful information, and interesting details about the history and culture of the fort, helping people discover and appreciate its true value. At the same time, it connects visitors with local businesses and services, creating a more convenient and memorable experience while supporting the community.',
+                                    '"To build a mobile app that makes exploring Galle Fort easier and more enjoyable. It offers simple navigation, useful insights, and cultural stories while connecting visitors with local businesses creating memorable experiences and supporting the community."',
                                     style: TextStyle(
                                         fontSize:
                                             MediaQuery.of(context).size.height *
                                                 0.02),
                                     textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.015,
+                                ),
+                              ],
+                            ),
+                          )),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Container(
+                          decoration: BoxDecoration(
+                            color: kColor3,
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.015,
+                                ),
+                                Text(
+                                  'Our Privacy Policy',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.height *
+                                              0.025,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.015,
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      final Uri url = Uri.parse(
+                                          'https://fortroamweb.onrender.com/privacy-policy');
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url,
+                                            mode:
+                                                LaunchMode.externalApplication);
+                                      } else {
+                                        throw 'Could not launch $url';
+                                      }
+                                    },
+                                    child: Text(
+                                      'View Privacy Policy',
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.02,
+                                        color: Colors.black,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(

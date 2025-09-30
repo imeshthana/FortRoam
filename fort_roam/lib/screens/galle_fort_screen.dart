@@ -45,7 +45,7 @@ class GalleFortScreen extends StatelessWidget {
                         child: Hero(
                           tag: imageHeroTag,
                           child: Image.asset(
-                            'images/placeImages/gallefort.jpg',
+                            'images/gallefort.jpg',
                             fit: BoxFit.cover,
                           ),
                         ),

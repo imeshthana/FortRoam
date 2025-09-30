@@ -164,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Hero(
                                     tag: imageHeroTag,
                                     child: Image.asset(
-                                      'images/placeImages/gallefort.jpg',
+                                      'images/gallefort.jpg',
                                       fit: BoxFit.fill,
                                     ),
                                   ),
