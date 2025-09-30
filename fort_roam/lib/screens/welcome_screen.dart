@@ -23,7 +23,7 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  bool showProgress = false;
+  bool showProgress = true;
 
   late List<Map<String, dynamic>> data = [];
   bool isLoading = false;
@@ -44,6 +44,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
     setState(() {
       isFirstTime = firstTime;
+      showProgress = false;
     });
 
     if (!firstTime) {
