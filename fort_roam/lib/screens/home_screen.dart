@@ -1,17 +1,9 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fort_roam/components/items_list.dart';
 import 'package:fort_roam/components/sections_row.dart';
 import 'package:fort_roam/components/sub_titles.dart';
-import 'package:fort_roam/screens/activity_screen.dart';
-import 'package:fort_roam/screens/commercial_screen.dart';
 import 'package:fort_roam/screens/galle_fort_screen.dart';
-import 'package:fort_roam/screens/history_screen.dart';
-import 'package:fort_roam/screens/map_screen.dart';
-import 'package:fort_roam/screens/place_screen.dart';
 import 'package:page_transition/page_transition.dart';
-import '../components/section_icon_button.dart';
 import '../components/slider.dart';
 import 'package:fort_roam/components/constants.dart';
 

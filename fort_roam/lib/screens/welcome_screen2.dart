@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fort_roam/dbHelper/mongodb.dart';
-import 'package:fort_roam/screens/home_screen.dart';
 import 'package:fort_roam/screens/main_layout.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:fort_roam/components/constants.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 class WelcomeScreen2 extends StatefulWidget {
   WelcomeScreen2({super.key});

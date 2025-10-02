@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fort_roam/components/app_bar3.dart';
 import 'package:fort_roam/components/constants.dart';
-import 'package:fort_roam/components/items_grid.dart';
 import 'package:fort_roam/components/sub_titles.dart';
 import 'package:fort_roam/dbHelper/fav_places.dart';
 import 'package:fort_roam/screens/custom_route_map_screen.dart';
 import 'package:fort_roam/screens/place_screen.dart';
 import 'package:fort_roam/screens/best_route_map_screen.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 class FavouritesScreen extends StatefulWidget {
   FavouritesScreen({super.key, required this.data});

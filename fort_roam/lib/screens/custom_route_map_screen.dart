@@ -1,4 +1,3 @@
-import 'package:avatar_glow/avatar_glow.dart';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/screens/place_map_screen.dart';
 import 'package:fort_roam/screens/place_screen.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:page_transition/page_transition.dart';
 import '../components/app_bar2.dart';

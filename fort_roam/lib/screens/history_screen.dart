@@ -1,11 +1,7 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:fort_roam/components/items_list.dart';
 import 'package:fort_roam/components/app_bar2.dart';
 import 'package:fort_roam/components/carousel_card_items.dart';
-import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/components/sub_titles.dart';
-import 'package:fort_roam/dbHelper/mongodb.dart';
 
 class HistoryScreen extends StatelessWidget {
   HistoryScreen({super.key, required this.data});

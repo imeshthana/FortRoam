@@ -14,7 +14,6 @@
 // }
 
 import 'dart:developer';
-import 'package:fort_roam/dbHelper/mongodb_model.dart';
 import 'package:fort_roam/dbHelper/constant.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 

@@ -6,8 +6,6 @@ import 'package:fort_roam/screens/favourites_screen.dart';
 import 'package:fort_roam/screens/home_screen.dart';
 import 'package:fort_roam/screens/search_screen.dart';
 import 'package:fort_roam/screens/map_screen.dart';
-import 'package:fort_roam/screens/services_screen.dart';
-import 'package:fort_roam/screens/search_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
 class MainLayout extends StatefulWidget {

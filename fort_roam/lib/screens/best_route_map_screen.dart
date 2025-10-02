@@ -1,4 +1,3 @@
-import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +6,6 @@ import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/dbHelper/fav_places.dart';
 import 'package:fort_roam/screens/place_map_screen.dart';
 import 'package:fort_roam/screens/place_screen.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import '../components/app_bar2.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

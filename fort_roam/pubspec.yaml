@@ -53,13 +53,13 @@ dependencies:
   connectivity_plus: ^5.0.2
   geolocator: ^11.0.0
   reorderable_grid_view: ^2.2.8
-  flutter_barcode_scanner: ^2.0.0
   google_fonts: ^6.2.0
   uuid: ^4.2.2
   http: ^1.2.1
   shared_preferences: ^2.3.3
   flutter_tts: ^4.2.3
   url_launcher: ^6.3.1
+  mobile_scanner: ^6.0.11
 
 dev_dependencies:
   flutter_test:

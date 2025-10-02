@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fort_roam/components/app_bar1.dart';
 import 'package:fort_roam/components/constants.dart';
-import 'package:fort_roam/components/items_grid.dart';
 import 'package:fort_roam/components/sub_titles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
