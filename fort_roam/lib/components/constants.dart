@@ -5,6 +5,8 @@ const kColor2 = Color.fromARGB(255, 252, 125, 93);
 const kColor3 = Color.fromARGB(255, 253, 154, 129);
 const kColor4 = Color.fromRGBO(224, 224, 224, 1);
 
+const String apiKey = "AIzaSyCuQOru9IeExSVpfu6250ZXtIn_XMqo4gs";
+
 // List<Map<String, String>> places = [
 //   {
 //     'type': 'historical',

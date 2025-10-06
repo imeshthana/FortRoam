@@ -25,111 +25,22 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
 
   final Completer<GoogleMapController> controller = Completer();
 
-  // List<Map<String, dynamic>> data = [];
-
-  // getData() async {
-  //   data = await MongoDatabase.getData();
-  // }
-
   static const LatLng center =
       const LatLng(6.028320555913446, 80.21670426593813);
 
   LocationData? currentLocation;
-
-  Future<void> getCurrentLocation() async {
-    Location location = Location();
-    location.getLocation().then((value) {
-      setState(() {
-        currentLocation = value;
-      });
-    });
-  }
-
-  Future<Uint8List> getBytesFromMapIcons(String path, int size) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetHeight: size, targetWidth: size);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
-  }
-
   List<Marker> markers = [];
-
-  getMarkerOfPlace() async {
-    final Uint8List mapIcon =
-        await getBytesFromMapIcons('assets/mapicons/location.png', 75);
-
-    Map<String, dynamic> selectedPlace =
-        widget.data.firstWhere((place) => place['title'] == widget.title);
-
-    if (selectedPlace != null) {
-      double latitude = double.parse(selectedPlace['latitude']!);
-      double longitude = double.parse(selectedPlace['longitude']!);
-
-      markers.add(
-        Marker(
-          markerId: MarkerId(selectedPlace['title']!),
-          position: LatLng(latitude, longitude),
-          icon: BitmapDescriptor.fromBytes(mapIcon),
-        ),
-      );
-    } else {
-      markers = [];
-    }
-  }
-
   List<LatLng> polylineCoordinates = [];
-  // Map<PolylineId, Polyline> polylines = {};
   Set<Polyline> polylines = {};
-  // PolylinePoints polylinePoints = PolylinePoints();
 
-  getPolyPoints() async {
-    Map<String, dynamic> selectedPlace =
-        widget.data.firstWhere((place) => place['title'] == widget.title);
-
-    double latitude = double.parse(selectedPlace['latitude']!);
-    double longitude = double.parse(selectedPlace['longitude']!);
-
-    // PolylinePoints polylinePoints = PolylinePoints();
-    PolylinePoints polylinePoints =
-        PolylinePoints(apiKey: "AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0");
-
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      request: PolylineRequest(
-        origin: PointLatLng(
-            currentLocation!.latitude!, currentLocation!.longitude!),
-        destination: PointLatLng(latitude, longitude),
-        mode: TravelMode.driving,
-      ),
-    );
-
-    if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-
-      addPolyLines();
-      // setState(() {});
-    }
-  }
-
-  addPolyLines() {
-    PolylineId id = PolylineId('route');
-    Polyline polyline = Polyline(
-        polylineId: id,
-        color: const Color.fromARGB(255, 59, 130, 254),
-        points: polylineCoordinates,
-        width: 4);
-    // polylines[id] = polyline;
-    polylines.add(polyline);
-    setState(() {});
-  }
+  late PolylinePoints polylinePoints;
 
   @override
   void initState() {
     super.initState();
+    polylinePoints =
+        PolylinePoints(apiKey: apiKey);
+
     getMarkerOfPlace();
     initializeMap();
 
@@ -147,6 +58,173 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
     }
   }
 
+  Future<void> getCurrentLocation() async {
+    Location location = Location();
+
+    bool serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) return;
+    }
+
+    PermissionStatus permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) return;
+    }
+
+    final locationData = await location.getLocation();
+    setState(() {
+      currentLocation = locationData;
+    });
+  }
+
+  Future<Uint8List> getBytesFromMapIcons(String path, int size) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetHeight: size,
+      targetWidth: size,
+    );
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
+  Future<void> getMarkerOfPlace() async {
+    try {
+      final Uint8List mapIcon =
+          await getBytesFromMapIcons('assets/mapicons/location.png', 75);
+
+      Map<String, dynamic>? selectedPlace = widget.data.firstWhere(
+        (place) => place['title'] == widget.title,
+        orElse: () => {},
+      );
+
+      if (selectedPlace.isNotEmpty) {
+        double latitude = double.parse(selectedPlace['latitude']!);
+        double longitude = double.parse(selectedPlace['longitude']!);
+
+        setState(() {
+          markers.add(
+            Marker(
+              markerId: MarkerId(selectedPlace['title']!),
+              position: LatLng(latitude, longitude),
+              icon: BitmapDescriptor.fromBytes(mapIcon),
+              infoWindow: InfoWindow(title: selectedPlace['title']),
+            ),
+          );
+        });
+      }
+    } catch (e) {
+      print('Error creating marker: $e');
+    }
+  }
+
+  Future<void> getPolyPoints() async {
+    try {
+      if (currentLocation == null) {
+        print('Current location is null');
+        return;
+      }
+
+      Map<String, dynamic>? selectedPlace = widget.data.firstWhere(
+        (place) => place['title'] == widget.title,
+        orElse: () => {},
+      );
+
+      if (selectedPlace.isEmpty) {
+        print('Selected place not found');
+        return;
+      }
+
+      double latitude = double.parse(selectedPlace['latitude']!);
+      double longitude = double.parse(selectedPlace['longitude']!);
+
+      print(
+          'Getting route from (${currentLocation!.latitude}, ${currentLocation!.longitude}) to ($latitude, $longitude)');
+
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        request: PolylineRequest(
+          origin: PointLatLng(
+            currentLocation!.latitude!,
+            currentLocation!.longitude!,
+          ),
+          destination: PointLatLng(latitude, longitude),
+          mode: TravelMode.driving,
+        ),
+      );
+
+      if (result.points.isNotEmpty) {
+        print('Route found with ${result.points.length} points');
+        polylineCoordinates.clear();
+
+        for (var point in result.points) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        }
+
+        addPolyLines();
+      } else if (result.errorMessage != null) {
+        print('Error getting route: ${result.errorMessage}');
+        _showError('Unable to get route: ${result.errorMessage}');
+      } else {
+        print('No route found');
+        _showError('No route found between locations');
+      }
+    } catch (e) {
+      print('Exception in getPolyPoints: $e');
+      _showError('Error getting route: $e');
+    }
+  }
+
+  void addPolyLines() {
+    PolylineId id = PolylineId('route');
+    Polyline polyline = Polyline(
+      polylineId: id,
+      color: const Color.fromARGB(255, 59, 130, 254),
+      points: polylineCoordinates,
+      width: 5,
+      startCap: Cap.roundCap,
+      endCap: Cap.roundCap,
+      jointType: JointType.round,
+    );
+
+    setState(() {
+      polylines.clear();
+      polylines.add(polyline);
+    });
+  }
+
+  void _showError(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+  Future<void> _animateToCurrentLocation() async {
+    if (currentLocation == null) return;
+
+    GoogleMapController mapController = await controller.future;
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(
+            currentLocation!.latitude!,
+            currentLocation!.longitude!,
+          ),
+          zoom: 16,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,58 +233,62 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
       floatingActionButton: Container(
         margin: EdgeInsets.only(bottom: 20),
         child: FloatingActionButton(
-            // mini: true,
-            backgroundColor: kColor2,
-            foregroundColor: Colors.white,
-            child: Icon(Icons.my_location),
-            onPressed: currentLocation == null
-                ? () {}
-                : () async {
-                    GoogleMapController currentcontroller =
-                        await controller.future;
-                    currentcontroller.animateCamera(
-                        CameraUpdate.newCameraPosition(CameraPosition(
-                            target: LatLng(currentLocation!.latitude!,
-                                currentLocation!.longitude!),
-                            zoom: 16)));
-                    setState(() {});
-                  }),
+          backgroundColor: kColor2,
+          foregroundColor: Colors.white,
+          child: Icon(Icons.my_location),
+          onPressed: currentLocation == null ? null : _animateToCurrentLocation,
+        ),
       ),
       body: currentLocation == null
           ? Center(
               child: CircularProgressIndicator(
-              color: kColor1,
-            ))
-          : Stack(children: [
-              GoogleMap(
+                color: kColor1,
+              ),
+            )
+          : Stack(
+              children: [
+                GoogleMap(
                   myLocationButtonEnabled: false,
                   myLocationEnabled: true,
                   mapToolbarEnabled: false,
                   compassEnabled: false,
                   zoomControlsEnabled: false,
-                  onMapCreated: (GoogleMapController controller) {
-                    controller.setMapStyle(mapStyle);
-                    this.controller.complete(controller);
-                    getPolyPoints();
-                  },
-                  initialCameraPosition:
-                      CameraPosition(target: center, zoom: 16),
-                  // polylines:
-                  //   Polyline(
-                  //     polylineId: PolylineId('route'),
-                  //     points: polylineCoordinates,
-                  //     color: Colors.red,
-                  //     width: 5,
-                  //   ),
-                  // },
-                  // polylines: widget.title != null
-                  //     ? Set<Polyline>.from(getPolyPoints())
-                  //     : {},
-                  polylines: polylines,
+                  onMapCreated: (GoogleMapController mapController) async {
+                    mapController.setMapStyle(mapStyle);
+                    controller.complete(mapController);
 
-                  // markers: Set<Marker>.from(markers),
-                  markers: Set<Marker>.from(markers)),
-            ]),
+                    if (currentLocation != null) {
+                      await getPolyPoints();
+                    }
+                  },
+                  initialCameraPosition: CameraPosition(
+                    target: currentLocation != null
+                        ? LatLng(
+                            currentLocation!.latitude!,
+                            currentLocation!.longitude!,
+                          )
+                        : center,
+                    zoom: 14,
+                  ),
+                  polylines: polylines,
+                  markers: Set<Marker>.from(markers),
+                ),
+
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: FloatingActionButton(
+                    mini: true,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.refresh, color: kColor2),
+                    onPressed: () async {
+                      await getCurrentLocation();
+                      await getPolyPoints();
+                    },
+                  ),
+                ),
+              ],
+            ),
     );
   }
 }

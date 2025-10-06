@@ -34,99 +34,145 @@ class _BestRouteMapScreenState extends State<BestRouteMapScreen> {
   final Completer<GoogleMapController> controller = Completer();
   CustomInfoWindowController? customInfoWindowController;
 
-  // List<Map<String, dynamic>> data = [];
-
-  // getData() async {
-  //   data = await MongoDatabase.getData();
-  // }
-
-  static const LatLng center =
-      const LatLng(6.028320555913446, 80.21670426593813);
+  static const LatLng center = LatLng(6.028320555913446, 80.21670426593813);
 
   LocationData? currentLocation;
   late PointLatLng initialPosition;
 
   late int numberOfPlaces;
-  late List<LatLng> polylineCoordinates;
-  // Map<PolylineId, Polyline> polylines = {};
-  late Set<Polyline> polylines;
-  // PolylinePoints polylinePoints = PolylinePoints();
+  List<LatLng> polylineCoordinates = [];
+  Set<Polyline> polylines = {};
+  List<Marker> markers = [];
+  List<PointLatLng> placesOrder = [];
+
+  late PolylinePoints polylinePoints;
+
+  @override
+  void initState() {
+    super.initState();
+    favoritePlaces = db.getFavoritePlaces();
+    places = widget.data
+        .where((place) => favoritePlaces.contains(place['title']))
+        .toList();
+
+    customInfoWindowController = CustomInfoWindowController();
+    initializeMapData();
+
+    DefaultAssetBundle.of(context)
+        .loadString('assets/maptheme/theme.json')
+        .then((value) {
+      mapStyle = value;
+    });
+  }
+
+  Future<void> initializeMapData() async {
+    await getCurrentLocation();
+    await getMarkersOfPlaces();
+    await getPlaceOrder();
+  }
 
   Future<void> getCurrentLocation() async {
-    Location location = Location();
-    location.getLocation().then((value) {
+    try {
+      Location location = Location();
+
+      bool serviceEnabled = await location.serviceEnabled();
+      if (!serviceEnabled) {
+        serviceEnabled = await location.requestService();
+        if (!serviceEnabled) return;
+      }
+
+      PermissionStatus permissionGranted = await location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) return;
+      }
+
+      final locationData = await location.getLocation();
       setState(() {
-        currentLocation = value;
-        initialPosition = PointLatLng(value.latitude!, value.longitude!);
+        currentLocation = locationData;
+        initialPosition =
+            PointLatLng(locationData.latitude!, locationData.longitude!);
       });
-    });
+    } catch (e) {
+      print('Error getting location: $e');
+    }
   }
 
   Future<Uint8List> getBytesFromMapIcons(String path, int size) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetHeight: size, targetWidth: size);
+    ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetHeight: size,
+      targetWidth: size,
+    );
     ui.FrameInfo fi = await codec.getNextFrame();
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
         .buffer
         .asUint8List();
   }
 
-  List<Marker> markers = [];
+  Future<void> getMarkersOfPlaces() async {
+    try {
+      final Uint8List mapIcon =
+          await getBytesFromMapIcons('assets/mapicons/location.png', 75);
 
-  getMarkersOfPlaces() async {
-    final Uint8List mapIcon =
-        await getBytesFromMapIcons('assets/mapicons/location.png', 75);
+      for (var place in places) {
+        double latitude = double.parse(place['latitude']!);
+        double longitude = double.parse(place['longitude']!);
 
-    for (var place in places) {
-      double latitude = double.parse(place['latitude']!);
-      double longitude = double.parse(place['longitude']!);
-
-      markers.add(
-        Marker(
-          markerId: MarkerId(place['title']!),
-          position: LatLng(latitude, longitude),
-          icon: BitmapDescriptor.fromBytes(mapIcon),
-          onTap: () => infoWindow(latitude, longitude, place),
-        ),
-      );
+        markers.add(
+          Marker(
+            markerId: MarkerId(place['title']!),
+            position: LatLng(latitude, longitude),
+            icon: BitmapDescriptor.fromBytes(mapIcon),
+            onTap: () => infoWindow(latitude, longitude, place),
+          ),
+        );
+      }
+      setState(() {});
+    } catch (e) {
+      print('Error creating markers: $e');
     }
   }
 
-  List<PointLatLng> placesOrder = [];
+  Future<void> getPlaceOrder() async {
+    if (currentLocation == null) return;
 
-  getPlaceOrder() async {
     PointLatLng previousPoint = initialPosition;
-    PointLatLng closedPoint = initialPosition;
+    List<Map<String, dynamic>> remainingPlaces = List.from(places);
 
-    for (int i = 0; i < numberOfPlaces; i++) {
-      double distance = 100000000000.0;
+    for (int i = 0; i < places.length; i++) {
+      double minDistance = double.infinity;
+      PointLatLng closestPoint = previousPoint;
+      Map<String, dynamic>? closestPlace;
 
-      for (var place in places) {
+      for (var place in remainingPlaces) {
         double latitude = double.parse(place['latitude']!);
         double longitude = double.parse(place['longitude']!);
 
         PointLatLng currentPoint = PointLatLng(latitude, longitude);
 
         double distanceBetween = calculateDistance(
-            previousPoint.latitude,
-            previousPoint.longitude,
-            currentPoint.latitude,
-            currentPoint.longitude);
+          previousPoint.latitude,
+          previousPoint.longitude,
+          currentPoint.latitude,
+          currentPoint.longitude,
+        );
 
-        if (distanceBetween < distance) {
-          distance = distanceBetween;
-          closedPoint = currentPoint;
-        } else {
-          continue;
+        if (distanceBetween < minDistance) {
+          minDistance = distanceBetween;
+          closestPoint = currentPoint;
+          closestPlace = place;
         }
       }
-      places.removeWhere((element) =>
-          element['latitude'] == closedPoint.latitude.toString() &&
-          element['longitude'] == closedPoint.longitude.toString());
-      previousPoint = closedPoint;
-      placesOrder.add(closedPoint);
+
+      if (closestPlace != null) {
+        remainingPlaces.remove(closestPlace);
+        previousPoint = closestPoint;
+        placesOrder.add(closestPoint);
+      }
     }
+
     setState(() {});
   }
 
@@ -138,75 +184,72 @@ class _BestRouteMapScreenState extends State<BestRouteMapScreen> {
     return 12742 * asin(sqrt(a));
   }
 
-  getPolyPoints() async {
-    if (currentLocation != null) {
+  Future<void> getPolyPoints() async {
+    if (currentLocation == null || placesOrder.isEmpty) {
+      print('Cannot get polylines: location or places order is empty');
+      return;
+    }
+
+    try {
       polylineCoordinates.clear();
       polylines.clear();
 
       PointLatLng previousPoint = initialPosition;
 
       for (var place in placesOrder) {
-        // double latitude = double.parse(place['latitude']!);
-        // double longitude = double.parse(place['longitude']!);
-
-        PointLatLng currentPoint = PointLatLng(place.latitude, place.longitude);
-
-        PolylineResult result =
-            await createPolylines(previousPoint, currentPoint);
+        PolylineResult result = await createPolylines(previousPoint, place);
 
         if (result.points.isNotEmpty) {
-          result.points.forEach((PointLatLng point) {
+          for (var point in result.points) {
             polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-          });
+          }
+        } else if (result.errorMessage != null) {
+          print('Route error: ${result.errorMessage}');
         }
-        previousPoint = currentPoint;
+
+        previousPoint = place;
       }
 
-      setState(() {
-        polylines.add(Polyline(
-          polylineId: PolylineId('route'),
-          points: polylineCoordinates,
-          width: 4,
-          color: Colors.blue,
-        ));
-      });
+      if (polylineCoordinates.isNotEmpty) {
+        setState(() {
+          polylines.add(Polyline(
+            polylineId: PolylineId('best_route'),
+            points: polylineCoordinates,
+            width: 5,
+            color: const Color.fromARGB(255, 59, 130, 254),
+            startCap: Cap.roundCap,
+            endCap: Cap.roundCap,
+            jointType: JointType.round,
+          ));
+        });
+      }
+    } catch (e) {
+      print('Error in getPolyPoints: $e');
     }
   }
 
   Future<PolylineResult> createPolylines(
       PointLatLng start, PointLatLng end) async {
-    // PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-    //   "AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0",
-    //   PointLatLng(
-    //     start.latitude,
-    //     start.longitude,
-    //   ),
-    //   PointLatLng(
-    //     end.latitude,
-    //     end.longitude,
-    //   ),
-    // );
+    try {
+      polylinePoints = PolylinePoints(apiKey: apiKey);
 
-    PolylinePoints polylinePoints =
-        PolylinePoints(apiKey: "AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0");
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        request: PolylineRequest(
+          origin: start,
+          destination: end,
+          mode: TravelMode.driving,
+        ),
+      );
 
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      request: PolylineRequest(
-        origin: PointLatLng(
-          start.latitude,
-          start.longitude,
-        ),
-        destination: PointLatLng(
-          end.latitude,
-          end.longitude,
-        ),
-        mode: TravelMode.driving,
-      ),
-    );
-    return result;
+      return result;
+    } catch (e) {
+      print('Error creating polyline: $e');
+      return PolylineResult(errorMessage: e.toString());
+    }
   }
 
-  infoWindow(double latitude, double longitude, Map<String, dynamic> place) {
+  void infoWindow(
+      double latitude, double longitude, Map<String, dynamic> place) {
     final UniqueKey titleHeroTag = UniqueKey();
     final UniqueKey imageHeroTag = UniqueKey();
 
@@ -217,151 +260,127 @@ class _BestRouteMapScreenState extends State<BestRouteMapScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border:
-              Border.all(color: const Color.fromRGBO(226, 94, 62, 1), width: 2),
+          border: Border.all(
+            color: const Color.fromRGBO(226, 94, 62, 1),
+            width: 2,
+          ),
         ),
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Hero(
-                tag: imageHeroTag,
-                child: Container(
-                  width: 400,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(place['image']!.toString()),
-                      fit: BoxFit.fill,
-                    ),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(18),
-                      topRight: Radius.circular(18),
-                    ),
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Hero(
+              tag: imageHeroTag,
+              child: Container(
+                width: 400,
+                height: 100,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(place['image']!.toString()),
+                    fit: BoxFit.fill,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(18),
+                    topRight: Radius.circular(18),
                   ),
                 ),
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: Hero(
-                  tag: titleHeroTag,
-                  child: Text(
-                    place['title']!,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Center(
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: Hero(
+                tag: titleHeroTag,
                 child: Text(
-                  place['subtype']!.toUpperCase(),
+                  place['title']!,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey,
                   ),
                 ),
               ),
-              SizedBox(
-                height: 10,
+            ),
+            SizedBox(height: 5),
+            Center(
+              child: Text(
+                place['subtype']!.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Material(
-                    color: kColor1,
-                    borderRadius: BorderRadius.circular(50.0),
-                    child: MaterialButton(
-                      padding: EdgeInsets.all(0.5),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            PageTransition(
-                              child: PlaceScreen(
-                                // image: place['image']!,
-                                title: place['title']!,
-                                qrPlace: false,
-                                titleHeroTag: titleHeroTag,
-                                imageHeroTag: imageHeroTag,
-                                data: widget.data,
-                              ),
-                              type: PageTransitionType.bottomToTop,
-                              alignment: Alignment.center,
-                              duration: Duration(milliseconds: 500),
-                              reverseDuration: Duration(milliseconds: 500),
-                            ));
-                      },
-                      height: 2,
-                      child: Text(
-                        'More Info',
-                        style: TextStyle(
-                          color: Colors.white,
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Material(
+                  color: kColor1,
+                  borderRadius: BorderRadius.circular(50.0),
+                  child: MaterialButton(
+                    padding: EdgeInsets.all(0.5),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          child: PlaceScreen(
+                            title: place['title']!,
+                            qrPlace: false,
+                            titleHeroTag: titleHeroTag,
+                            imageHeroTag: imageHeroTag,
+                            data: widget.data,
+                          ),
+                          type: PageTransitionType.bottomToTop,
+                          alignment: Alignment.center,
+                          duration: Duration(milliseconds: 500),
+                          reverseDuration: Duration(milliseconds: 500),
                         ),
-                      ),
+                      );
+                    },
+                    height: 2,
+                    child: Text(
+                      'More Info',
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  SizedBox(width: 0),
-                  Material(
-                    color: kColor1,
-                    shape: CircleBorder(),
-                    child: MaterialButton(
-                      padding: EdgeInsets.all(0.5),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            PageTransition(
-                                child: PlaceMapScreen(
-                                  title: place['title']!,
-                                  data: widget.data,
-                                ),
-                                type: PageTransitionType.bottomToTop,
-                                duration: Duration(milliseconds: 500),
-                                reverseDuration: Duration(milliseconds: 500)));
-                      },
-                      child: Icon(
-                        Icons.directions,
-                        color: Colors.white,
-                        size: 30,
-                      ),
+                ),
+                SizedBox(width: 0),
+                Material(
+                  color: kColor1,
+                  shape: CircleBorder(),
+                  child: MaterialButton(
+                    padding: EdgeInsets.all(0.5),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          child: PlaceMapScreen(
+                            title: place['title']!,
+                            data: widget.data,
+                          ),
+                          type: PageTransitionType.bottomToTop,
+                          duration: Duration(milliseconds: 500),
+                          reverseDuration: Duration(milliseconds: 500),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.directions,
+                      color: Colors.white,
+                      size: 30,
                     ),
                   ),
-                ],
-              )
-            ]),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       LatLng(latitude, longitude),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    favoritePlaces = db.getFavoritePlaces();
-    places = widget.data
-        .where((place) => favoritePlaces.contains(place['title']))
-        .toList();
-    polylineCoordinates = [];
-    polylines = {};
-    getCurrentLocation();
-    getMarkersOfPlaces();
-    customInfoWindowController = CustomInfoWindowController();
-    getPlaceOrder();
-    // getPolyPoints();
-    DefaultAssetBundle.of(context)
-        .loadString('assets/maptheme/theme.json')
-        .then((value) {
-      mapStyle = value;
-    });
   }
 
   @override
@@ -372,60 +391,88 @@ class _BestRouteMapScreenState extends State<BestRouteMapScreen> {
       floatingActionButton: Container(
         margin: EdgeInsets.only(bottom: 20),
         child: FloatingActionButton(
-            // mini: true,
-            backgroundColor: kColor2,
-            foregroundColor: Colors.white,
-            child: Icon(Icons.my_location),
-            onPressed: currentLocation == null
-                ? () {}
-                : () async {
-                    GoogleMapController currentcontroller =
-                        await controller.future;
-                    currentcontroller.animateCamera(
-                        CameraUpdate.newCameraPosition(CameraPosition(
-                            target: LatLng(currentLocation!.latitude!,
-                                currentLocation!.longitude!),
-                            zoom: 16)));
-                    setState(() {});
-                  }),
+          backgroundColor: kColor2,
+          foregroundColor: Colors.white,
+          child: Icon(Icons.my_location),
+          onPressed: currentLocation == null
+              ? null
+              : () async {
+                  GoogleMapController currentController =
+                      await controller.future;
+                  currentController.animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        target: LatLng(
+                          currentLocation!.latitude!,
+                          currentLocation!.longitude!,
+                        ),
+                        zoom: 16,
+                      ),
+                    ),
+                  );
+                },
+        ),
       ),
       body: currentLocation == null
           ? Center(
-              child: CircularProgressIndicator(
-              color: kColor1,
-            ))
-          : Stack(children: [
-              GoogleMap(
-                myLocationButtonEnabled: false,
-                myLocationEnabled: true,
-                mapToolbarEnabled: false,
-                compassEnabled: false,
-                zoomControlsEnabled: false,
-                onMapCreated: (GoogleMapController controller) {
-                  controller.setMapStyle(mapStyle);
-                  this.controller.complete(controller);
-                  numberOfPlaces = places.length;
-                  customInfoWindowController!.googleMapController = controller;
-                  getPlaceOrder();
-                  getPolyPoints();
-                },
-                initialCameraPosition: CameraPosition(target: center, zoom: 16),
-                polylines: polylines,
-                markers: Set<Marker>.from(markers),
-                onTap: (position) {
-                  customInfoWindowController!.hideInfoWindow!();
-                },
-                onCameraMove: (position) {
-                  customInfoWindowController!.onCameraMove!();
-                },
-              ),
-              CustomInfoWindow(
-                controller: customInfoWindowController!,
-                height: 230,
-                width: 200,
-                offset: 50,
-              )
-            ]),
+              child: CircularProgressIndicator(color: kColor1),
+            )
+          : Stack(
+              children: [
+                GoogleMap(
+                  myLocationButtonEnabled: false,
+                  myLocationEnabled: true,
+                  mapToolbarEnabled: false,
+                  compassEnabled: false,
+                  zoomControlsEnabled: false,
+                  onMapCreated: (GoogleMapController mapController) async {
+                    mapController.setMapStyle(mapStyle);
+                    controller.complete(mapController);
+                    customInfoWindowController!.googleMapController =
+                        mapController;
+
+                    numberOfPlaces = places.length;
+                    await getPolyPoints();
+                  },
+                  initialCameraPosition: CameraPosition(
+                    target: currentLocation != null
+                        ? LatLng(
+                            currentLocation!.latitude!,
+                            currentLocation!.longitude!,
+                          )
+                        : center,
+                    zoom: 13,
+                  ),
+                  polylines: polylines,
+                  markers: Set<Marker>.from(markers),
+                  onTap: (position) {
+                    customInfoWindowController!.hideInfoWindow!();
+                  },
+                  onCameraMove: (position) {
+                    customInfoWindowController!.onCameraMove!();
+                  },
+                ),
+                CustomInfoWindow(
+                  controller: customInfoWindowController!,
+                  height: 230,
+                  width: 200,
+                  offset: 50,
+                ),
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: FloatingActionButton(
+                    mini: true,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.refresh, color: kColor2),
+                    onPressed: () async {
+                      await getCurrentLocation();
+                      await getPolyPoints();
+                    },
+                  ),
+                ),
+              ],
+            ),
     );
   }
 }
