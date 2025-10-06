@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:fort_roam/screens/place_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CarouselCardItems extends StatelessWidget {
   CarouselCardItems({
@@ -41,18 +42,10 @@ class CarouselCardItems extends StatelessWidget {
               margin: EdgeInsets.only(top: 10, bottom: 10),
               child: GestureDetector(
                 onTap: () {
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => PlaceScreen(
-                  //         image: cardItems[index]['image']!,
-                  //         title: cardItems[index]['name']!,
-                  //         titleHeroTag: titleHeroTag,
-                  //         imageHeroTag: imageHeroTag,)));
-
                   Navigator.push(
                       context,
                       PageTransition(
                           child: PlaceScreen(
-                            // image: placeList[index]['image']!.toString(),
                             title: placeList[index]['title']!.toString(),
                             titleHeroTag: titleHeroTag,
                             imageHeroTag: imageHeroTag,
@@ -81,12 +74,30 @@ class CarouselCardItems extends StatelessWidget {
                               tag: imageHeroTag,
                               child: Container(
                                 width: double.infinity,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                        placeList[index]['image']!.toString()),
-                                    fit: BoxFit.fill,
-                                  ),
+                                child: Image.network(
+                                  placeList[index]['image']!.toString(),
+                                  fit: BoxFit.fill,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey[300],
+                                      child: Icon(
+                                        Icons.broken_image,
+                                        color: Colors.grey[600],
+                                        size: 50,
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ),

@@ -5,7 +5,7 @@ import 'package:hive/hive.dart';
 
 void main() async {
   await Hive.initFlutter();
-
+  var box = await Hive.openBox('favBox');
   runApp(FortRoamApp());
 }
 

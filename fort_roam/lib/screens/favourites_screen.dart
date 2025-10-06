@@ -7,6 +7,7 @@ import 'package:fort_roam/screens/custom_route_map_screen.dart';
 import 'package:fort_roam/screens/place_screen.dart';
 import 'package:fort_roam/screens/best_route_map_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shimmer/shimmer.dart';
 
 class FavouritesScreen extends StatefulWidget {
   FavouritesScreen({super.key, required this.data});
@@ -60,9 +61,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: 20),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Row(
@@ -95,9 +94,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 20,
-                    ),
+                    SizedBox(width: 20),
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -133,9 +130,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
               ),
               SizedBox(height: 20.0),
               SubTitles(subTitle: 'Favourites'),
-              SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: 20),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: filteredPlaces.isEmpty
@@ -210,7 +205,6 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                                           context,
                                           PageTransition(
                                             child: PlaceScreen(
-                                              // image: filteredPlaces[index]['image']!,
                                               title: filteredPlaces[index]
                                                   ['title']!,
                                               titleHeroTag: titleHeroTag,
@@ -269,13 +263,42 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                                                                   .size
                                                                   .height *
                                                               0.1,
-                                                      decoration: BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: NetworkImage(
-                                                            place['image']!,
-                                                          ),
-                                                          fit: BoxFit.fitHeight,
-                                                        ),
+                                                      child: Image.network(
+                                                        place['image']!,
+                                                        fit: BoxFit.fitHeight,
+                                                        loadingBuilder: (context,
+                                                            child,
+                                                            loadingProgress) {
+                                                          if (loadingProgress ==
+                                                              null)
+                                                            return child;
+                                                          return Shimmer
+                                                              .fromColors(
+                                                            baseColor: Colors
+                                                                .grey[300]!,
+                                                            highlightColor:
+                                                                Colors
+                                                                    .grey[100]!,
+                                                            child: Container(
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          );
+                                                        },
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return Container(
+                                                            color: Colors
+                                                                .grey[300],
+                                                            child: Icon(
+                                                              Icons
+                                                                  .broken_image,
+                                                              color: Colors
+                                                                  .grey[600],
+                                                              size: 40,
+                                                            ),
+                                                          );
+                                                        },
                                                       ),
                                                     ),
                                                   ),
@@ -318,9 +341,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                         ],
                       ),
               ),
-              SizedBox(
-                height: 30,
-              )
+              SizedBox(height: 30)
             ],
           ),
         ),

@@ -1,4 +1,4 @@
-package com.example.fort_roam
+package com.quadrabytes.fortroam
 
 import io.flutter.embedding.android.FlutterActivity
 

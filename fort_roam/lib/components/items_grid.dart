@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fort_roam/screens/place_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ItemsGrid extends StatefulWidget {
   const ItemsGrid({
@@ -42,7 +43,6 @@ class _ItemsGridState extends State<ItemsGrid> {
                   context,
                   PageTransition(
                     child: PlaceScreen(
-                      // image: widget.places[index]['image']!,
                       title: widget.places[index]['title']!,
                       titleHeroTag: titleHeroTag,
                       imageHeroTag: imageHeroTag,
@@ -75,13 +75,30 @@ class _ItemsGridState extends State<ItemsGrid> {
                           tag: imageHeroTag,
                           child: Container(
                             width: double.infinity,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  place['image']!,
-                                ),
-                                fit: BoxFit.cover,
-                              ),
+                            child: Image.network(
+                              place['image']!,
+                              fit: BoxFit.cover,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[100]!,
+                                  child: Container(
+                                    color: Colors.white,
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: Colors.grey[300],
+                                  child: Icon(
+                                    Icons.broken_image,
+                                    color: Colors.grey[600],
+                                    size: 50,
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),

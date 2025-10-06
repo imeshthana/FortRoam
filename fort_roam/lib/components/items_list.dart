@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/screens/place_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shimmer/shimmer.dart';
 import 'dart:math';
 
 class ItemsList extends StatelessWidget {
@@ -32,7 +32,6 @@ class ItemsList extends StatelessWidget {
                       context,
                       PageTransition(
                         child: PlaceScreen(
-                          // image: cardItems[index]['image']!,
                           title: cardItems[index]['title']!,
                           titleHeroTag: titleHeroTag,
                           imageHeroTag: imageHeroTag,
@@ -66,14 +65,30 @@ class ItemsList extends StatelessWidget {
                                 height:
                                     MediaQuery.of(context).size.height * 0.2,
                                 width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      cardItems[index]['image']!,
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
+                                child: Image.network(
+                                  cardItems[index]['image']!,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey[300],
+                                      child: Icon(
+                                        Icons.broken_image,
+                                        color: Colors.grey[600],
+                                        size: 50,
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ),

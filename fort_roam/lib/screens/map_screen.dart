@@ -12,6 +12,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:uuid/uuid.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MapScreen extends StatefulWidget {
   MapScreen({required this.data});
@@ -23,7 +24,8 @@ class MapScreen extends StatefulWidget {
   static String id = 'map_screen';
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends State<MapScreen>
+    with AutomaticKeepAliveClientMixin {
   String mapStyle = '';
   String selectedCategory = 'historical';
 
@@ -31,16 +33,14 @@ class _MapScreenState extends State<MapScreen> {
 
   final Completer<GoogleMapController> controller = Completer();
 
-  // List<Map<String, dynamic>> data = [];
-
-  // getData() async {
-  //   data = await MongoDatabase.getData();
-  // }
-
   static const LatLng center =
       const LatLng(6.028320555913446, 80.21670426593813);
 
   LocationData? currentLocation;
+
+  // Add this to keep the state alive
+  @override
+  bool get wantKeepAlive => true;
 
   Future<void> getCurrentLocation() async {
     Location location = Location();
@@ -51,7 +51,7 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  infoWindow(double latitude, double longitude, Map<String, dynamic> place) {
+infoWindow(double latitude, double longitude, Map<String, dynamic> place) {
     final UniqueKey titleHeroTag = UniqueKey();
     final UniqueKey imageHeroTag = UniqueKey();
 
@@ -71,24 +71,42 @@ class _MapScreenState extends State<MapScreen> {
             children: [
               Hero(
                 tag: imageHeroTag,
-                child: Container(
-                  width: 400,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(place['image']!.toString()),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(18),
+                    topRight: Radius.circular(18),
+                  ),
+                  child: Container(
+                    width: 400,
+                    height: 100,
+                    child: Image.network(
+                      place['image']!.toString(),
                       fit: BoxFit.fill,
-                    ),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(18),
-                      topRight: Radius.circular(18),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            color: Colors.white,
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: Icon(
+                            Icons.broken_image,
+                            color: Colors.grey[600],
+                            size: 40,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
               ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               Center(
                 child: Hero(
                   tag: titleHeroTag,
@@ -104,9 +122,7 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 5,
-              ),
+              SizedBox(height: 5),
               Center(
                 child: Text(
                   place['subtype']!.toUpperCase(),
@@ -117,9 +133,7 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -133,7 +147,6 @@ class _MapScreenState extends State<MapScreen> {
                             context,
                             PageTransition(
                               child: PlaceScreen(
-                                // image: place['image']!,
                                 title: place['title']!,
                                 qrPlace: false,
                                 titleHeroTag: titleHeroTag,
@@ -149,9 +162,7 @@ class _MapScreenState extends State<MapScreen> {
                       height: 2,
                       child: Text(
                         'More Info',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
@@ -187,7 +198,6 @@ class _MapScreenState extends State<MapScreen> {
       LatLng(latitude, longitude),
     );
   }
-
   Future<Uint8List> getBytesFromMapIcons(String path, int size) async {
     ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
@@ -352,7 +362,6 @@ class _MapScreenState extends State<MapScreen> {
                 ),
               );
               break;
-
             case 'taxi':
               placeMarkers.add(
                 Marker(
@@ -414,6 +423,9 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(
+        context); // Must call super.build when using AutomaticKeepAliveClientMixin
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       floatingActionButton: Column(
@@ -421,7 +433,6 @@ class _MapScreenState extends State<MapScreen> {
           Container(
             margin: EdgeInsets.only(top: 50),
             child: SpeedDial(
-              // mini: true,
               animatedIcon: AnimatedIcons.menu_close,
               direction: SpeedDialDirection.down,
               backgroundColor: kColor2,
@@ -434,7 +445,6 @@ class _MapScreenState extends State<MapScreen> {
                     Icons.account_balance,
                     size: MediaQuery.of(context).size.height * 0.035,
                   ),
-                  // label: 'Historical',
                   onTap: () {
                     setState(() {
                       selectedCategory = 'historical';
@@ -447,7 +457,6 @@ class _MapScreenState extends State<MapScreen> {
                     Icons.restaurant,
                     size: MediaQuery.of(context).size.height * 0.035,
                   ),
-                  // label: 'Restaurants',
                   onTap: () {
                     setState(() {
                       selectedCategory = 'restaurant';
@@ -460,7 +469,6 @@ class _MapScreenState extends State<MapScreen> {
                     Icons.pedal_bike,
                     size: MediaQuery.of(context).size.height * 0.035,
                   ),
-                  // label: 'Activities',
                   onTap: () {
                     setState(() {
                       selectedCategory = 'activity';
@@ -473,7 +481,6 @@ class _MapScreenState extends State<MapScreen> {
                     Icons.shopping_cart,
                     size: MediaQuery.of(context).size.height * 0.035,
                   ),
-                  // label: 'Shops',
                   onTap: () {
                     setState(() {
                       selectedCategory = 'shop';
@@ -486,7 +493,6 @@ class _MapScreenState extends State<MapScreen> {
                     Icons.h_mobiledata_rounded,
                     size: MediaQuery.of(context).size.height * 0.05,
                   ),
-                  // label: 'Hotels',
                   onTap: () {
                     setState(() {
                       selectedCategory = 'hotel';
@@ -499,7 +505,6 @@ class _MapScreenState extends State<MapScreen> {
                     Icons.safety_check,
                     size: MediaQuery.of(context).size.height * 0.04,
                   ),
-                  // label: 'Hotels',
                   onTap: () {
                     setState(() {
                       selectedCategory = 'services';
@@ -554,7 +559,6 @@ class _MapScreenState extends State<MapScreen> {
                   loadMarkers();
                 },
                 initialCameraPosition: CameraPosition(target: center, zoom: 16),
-                // markers: Set<Marker>.from(markers),
                 markers: Set<Marker>.from(getFilteredMarkers()),
                 onTap: (position) {
                   customInfoWindowController!.hideInfoWindow!();

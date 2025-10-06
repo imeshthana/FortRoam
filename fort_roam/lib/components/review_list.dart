@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fort_roam/components/constants.dart';
-import 'package:fort_roam/screens/place_screen.dart';
-import 'package:page_transition/page_transition.dart';
 import 'dart:math';
 
 class ReviewList extends StatefulWidget {

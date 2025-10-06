@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fort_roam/components/constants.dart';
 import 'package:fort_roam/screens/place_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shimmer/shimmer.dart';
 import 'dart:math';
 
 class ItemsList2 extends StatelessWidget {
@@ -25,7 +25,6 @@ class ItemsList2 extends StatelessWidget {
                       context,
                       PageTransition(
                         child: PlaceScreen(
-                          // image: data[index]['image']!,
                           title: data[index]['title']!,
                           titleHeroTag: titleHeroTag,
                           imageHeroTag: imageHeroTag,
@@ -59,13 +58,30 @@ class ItemsList2 extends StatelessWidget {
                                 height:
                                     MediaQuery.of(context).size.height * 0.2,
                                 width: double.infinity,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      data[index]['image']!,
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
+                                child: Image.network(
+                                  data[index]['image']!,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey[300],
+                                      child: Icon(
+                                        Icons.broken_image,
+                                        color: Colors.grey[600],
+                                        size: 50,
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ),
