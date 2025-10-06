@@ -83,7 +83,7 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
   List<LatLng> polylineCoordinates = [];
   // Map<PolylineId, Polyline> polylines = {};
   Set<Polyline> polylines = {};
-  PolylinePoints polylinePoints = PolylinePoints();
+  // PolylinePoints polylinePoints = PolylinePoints();
 
   getPolyPoints() async {
     Map<String, dynamic> selectedPlace =
@@ -92,12 +92,17 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
     double latitude = double.parse(selectedPlace['latitude']!);
     double longitude = double.parse(selectedPlace['longitude']!);
 
-    PolylinePoints polylinePoints = PolylinePoints();
+    // PolylinePoints polylinePoints = PolylinePoints();
+    PolylinePoints polylinePoints =
+        PolylinePoints(apiKey: "AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0");
 
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      "AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0",
-      PointLatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-      PointLatLng(latitude, longitude),
+      request: PolylineRequest(
+        origin: PointLatLng(
+            currentLocation!.latitude!, currentLocation!.longitude!),
+        destination: PointLatLng(latitude, longitude),
+        mode: TravelMode.driving,
+      ),
     );
 
     if (result.points.isNotEmpty) {
@@ -125,15 +130,21 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
   @override
   void initState() {
     super.initState();
-    getCurrentLocation();
     getMarkerOfPlace();
-    getPolyPoints();
+    initializeMap();
 
     DefaultAssetBundle.of(context)
         .loadString('assets/maptheme/theme.json')
         .then((value) {
       mapStyle = value;
     });
+  }
+
+  Future<void> initializeMap() async {
+    await getCurrentLocation();
+    if (currentLocation != null) {
+      await getPolyPoints();
+    }
   }
 
   @override

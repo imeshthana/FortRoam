@@ -46,7 +46,7 @@ class _CustomRouteMapScreenState extends State<CustomRouteMapScreen> {
   late List<LatLng> polylineCoordinates;
   // Map<PolylineId, Polyline> polylines = {};
   late Set<Polyline> polylines;
-  PolylinePoints polylinePoints = PolylinePoints();
+  // PolylinePoints polylinePoints = PolylinePoints();
 
   Future<void> getCurrentLocation() async {
     Location location = Location();
@@ -128,15 +128,32 @@ class _CustomRouteMapScreenState extends State<CustomRouteMapScreen> {
 
   Future<PolylineResult> createPolylines(
       PointLatLng start, PointLatLng end) async {
+    // PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+    //   "AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0",
+    //   PointLatLng(
+    //     start.latitude,
+    //     start.longitude,
+    //   ),
+    //   PointLatLng(
+    //     end.latitude,
+    //     end.longitude,
+    //   ),
+    // );
+
+    PolylinePoints polylinePoints =
+        PolylinePoints(apiKey: "AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0");
+
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      "AIzaSyAGnLkryMMC285KzEIT_lJNoZz1x_MXQK0",
-      PointLatLng(
-        start.latitude,
-        start.longitude,
-      ),
-      PointLatLng(
-        end.latitude,
-        end.longitude,
+      request: PolylineRequest(
+        origin: PointLatLng(
+          start.latitude,
+          start.longitude,
+        ),
+        destination: PointLatLng(
+          end.latitude,
+          end.longitude,
+        ),
+        mode: TravelMode.driving,
       ),
     );
     return result;
