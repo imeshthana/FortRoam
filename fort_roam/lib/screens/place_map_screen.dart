@@ -113,7 +113,6 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
     return bytes.buffer.asUint8List();
   }
 
-  // ---------- Helpers: location & camera ----------
   Future<void> _ensureLocation() async {
     final location = Location();
 
@@ -146,7 +145,6 @@ class _PlaceMapScreenState extends State<PlaceMapScreen> {
     await _animateTo(LatLng(loc.latitude!, loc.longitude!));
   }
 
-  // ---------- Markers & polylines ----------
   void _buildSelectedPlaceMarker() {
     final place = _selectedPlace;
     final icon = _placeIconBytes;
