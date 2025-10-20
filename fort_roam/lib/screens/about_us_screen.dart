@@ -229,6 +229,21 @@ class AboutUsScreen extends StatelessWidget {
                       width: MediaQuery.of(context).size.height * 0.12,
                       height: MediaQuery.of(context).size.height * 0.25,
                       child: Image.asset(
+                        'images/quadrabytes.png',
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      width: MediaQuery.of(context).size.height * 0.12,
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      child: Image.asset(
                         'images/ruhuna_logo.jpg',
                       ),
                     ),
