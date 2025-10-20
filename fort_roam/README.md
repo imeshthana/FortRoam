@@ -1,13 +1,19 @@
 # Dev
 
-run => 
-    flutter pub get 
-    flutter run
+run =>
+
+- cd fort_roam
+- flutter pub get
+- flutter run
 
 # Prod
 
-apk => 
-    flutter build apk --release  
+apk =>
+
+- cd fort_roam
+- flutter build apk --release
 
 aab =>
-    flutter build appbundle --release
+
+- cd fort_roam
+- flutter build appbundle --release
