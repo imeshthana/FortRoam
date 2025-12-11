@@ -109,7 +109,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       PageTransition(
         child: MainLayout(data: data),
         type: PageTransitionType.bottomToTop,
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: 1),
       ),
     );
   }

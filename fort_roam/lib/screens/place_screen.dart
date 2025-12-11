@@ -102,6 +102,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
   Future<void> speakDescription() async {
     String title = selectedPlace['title'];
     print(title);
+    print(selectedPlace['description']);
     String description = selectedPlace['description'];
     if (description.isEmpty) {
       description =
@@ -405,7 +406,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                             Container(
                               child: selectedPlace['description'] == ''
                                   ? Text(
-                                      'Galle Fort is a historic fortified city located in the southwestern part of Sri Lanka, in the city of Galle. Originally built by the Portuguese in the 16th century and later extensively fortified by the Dutch in the 17th century, Galle Fort stands as a UNESCO World Heritage Site and is a prominent example of well-preserved colonial architecture.',
+                                      'We have no description available for ${selectedPlace['title']} at the moment.',
                                       style: TextStyle(
                                         fontSize:
                                             MediaQuery.of(context).size.height *

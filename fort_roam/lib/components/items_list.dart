@@ -13,8 +13,14 @@ class ItemsList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> cardItems;
 
+    final filteredPlaces = data.where((place) {
+      final mainCategory =
+          place['type']?.toString().toLowerCase() ?? '';
+      return mainCategory == 'historical' || mainCategory == 'commercial';
+    }).toList();
+
     final random = Random();
-    final shuffledPlaces = [...data]..shuffle(random);
+    final shuffledPlaces = [...filteredPlaces]..shuffle(random);
 
     cardItems = shuffledPlaces.take(5).toList();
 
